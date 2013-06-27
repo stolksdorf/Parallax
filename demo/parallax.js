@@ -1,4 +1,4 @@
-(function($){
+;(function($){
 	window.Parallax = {
 		defaultOptions : {
 			animation_time : 800,
@@ -39,7 +39,7 @@
 				});
 				finished();
 			},
-			shoveRight : function(newPage, currentPage, viewPort, options, finished){
+			right : function(newPage, currentPage, viewPort, options, finished){
 				Parallax.parallaxMethods.right(viewPort, options);
 				currentPage.animate({
 					left : -viewPort.width()
@@ -53,7 +53,7 @@
 					left : 0
 				}, options.animation_time, finished);
 			},
-			shoveLeft : function(newPage, currentPage, viewPort, options, finished){
+			left : function(newPage, currentPage, viewPort, options, finished){
 				Parallax.parallaxMethods.left(viewPort, options);
 				currentPage.animate({
 					left : viewPort.width()
@@ -67,7 +67,7 @@
 					left : 0
 				}, options.animation_time, finished);
 			},
-			shoveUp : function(newPage, currentPage, viewPort, options, finished){
+			up : function(newPage, currentPage, viewPort, options, finished){
 				Parallax.parallaxMethods.top(viewPort, options);
 				currentPage.animate({
 					top : -viewPort.height()
@@ -81,7 +81,7 @@
 					top : 0
 				}, options.animation_time, finished);
 			},
-			shoveDown : function(newPage, currentPage, viewPort, options, finished){
+			down : function(newPage, currentPage, viewPort, options, finished){
 				Parallax.parallaxMethods.bottom(viewPort, options);
 				currentPage.animate({
 					top : viewPort.height()
@@ -302,8 +302,6 @@
 			return this.viewPort.current().id === this.id;
 		},
 	});
-
-
 
 	$.fn.parallax = function(options) {
 		return Object.create(ViewPort).initialize($(this), options);

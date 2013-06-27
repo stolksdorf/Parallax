@@ -18,6 +18,22 @@ $(document).ready(function(){
 	};
 
 
+	Parallax.transitions.flipRight = function(newPage, currentPage, viewPort, options, finished){
+
+		newPage.addClass('flippant-back');
+		currentPage.addClass('flippant');
+
+		viewPort.addClass('flipper');
+
+		currentPage.addClass('flipped');
+
+
+		console.log('flippeing');
+
+		finished();
+
+
+	};
 
 
 
@@ -27,19 +43,21 @@ $(document).ready(function(){
 		parallax_scale : 0.3
 	});
 
-
+/*
 	setInterval( function(){
-		viewPort.next().stageRight();
+		viewPort.next().right();
 	}, 2000);
+*/
 
+
+$('.container').mouseover(function(){
+	console.log('asdsad');
+	viewPort.next().flipRight();
+});
 
 
 });
 
-
-Ball
-
-var myball = new BaseBall()
 
 
 

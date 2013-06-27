@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+	<!-- Libraries -->
+	<script type="text/javascript" src="libs/jq.js"></script>
+
+	<script type="text/javascript" src="index.js"></script>
+	<script type="text/javascript" src="parallax.js"></script>
+
+</head>
+<body>
+	<script>
+		$(document).ready(function(){
+
+
+
+
+
+/*
+			$('.container').mouseover(function(){
+				P.next().flipRight();
+			});
+*/
+		});
+	</script>
+
+	<div class='container' style='height:100px;background-image:url("http://i264.photobucket.com/albums/ii184/numerobetically/Mario%20Renders/Mario%20Background/mariobg.png")'>
+			<div class='card' style='background-color:red'>Test</div>
+			<div class='card' style='background-color:green'>Test1</div>
+			<div class='card' style='background-color:blue;'>Test2</div>
+			<div class='card' style='background-color:brown;'>Test3</div>
+			<div class='card' style='background-color:orange'>Test4</div>
+
+
+	</div>
+	<style>
+	.card{
+		width : 50px;
+		height : 50px;
+
+	}
+
+
+
+
+	.flippant {
+		transform: perspective(500px) rotateY(0deg);
+		-webkit-transform: perspective(500px) rotateY(0deg);
+		-moz-transform: perspective(500px) rotateY(0deg);
+		/*z-index: 200;*/
+	}
+
+	.flippant-back {
+		transform: perspective(500px) rotateY(-180deg);
+		-moz-transform: perspective(500px) rotateY(-180deg);
+		-webkit-transform: perspective(500px) rotateY(-180deg);
+		height: 0;
+		/*z-index: 200;*/
+	}
+
+	.flippant, .flippant-back {
+		transform-style: preserve-3d;
+		-webkit-transform-style: preserve-3d;
+		-moz-transform-style: preserve-3d;
+
+		backface-visibility: hidden;
+		-webkit-backface-visibility: hidden;
+		-moz-backface-visibility: hidden;
+	}
+
+	.flippant, .flipper {
+		-o-transition: all .2s ease-in-out;
+		-ms-transition: all .2s ease-in-out;
+		-moz-transition: all .2s ease-in-out;
+		-webkit-transition: all .2s ease-in-out;
+		transition: all .2s ease-in-out;
+	}
+
+	.flippant.flipped {
+		transform: perspective(500px) rotateY(180deg);
+		-moz-transform: perspective(500px) rotateY(180deg);
+		-webkit-transform: perspective(500px) rotateY(180deg);
+
+	}
+
+	.flippant-back.flipped  {
+		transform: perspective(500px) rotateY(0deg);
+		-moz-transform: perspective(500px) rotateY(0deg);
+		-webkit-transform: perspective(500px) rotateY(0deg);
+	}
+
+
+
+
+
+	</style>
+</body>

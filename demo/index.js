@@ -43,11 +43,11 @@ $(document).ready(function(){
 		parallax_scale : 0.3
 	});
 
-/*
+
 	setInterval( function(){
 		viewPort.next().right();
 	}, 2000);
-*/
+
 
 
 $('.container').mouseover(function(){

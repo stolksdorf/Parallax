@@ -1,39 +1,47 @@
 ;(function($){
 	window.Parallax = {
 		defaultOptions : {
-			animation_time : 800,
-			parallax_scale : 0.0,
-			auto_add_children : true,
-			resize_viewport_width : false,
-			resize_viewport_height : false
+			animation_time         : 800,
+			parallax_scale         : 0.0,
+			auto_add_children      : true,
+			resize_viewport_width  : false,
+			resize_viewport_height : false,
+			use_css3_transitions   : false
 		},
 		parallaxMethods : {
 			right : function(viewPort, options){
-				viewPort.animate({
-					'background-position-x': '+=' + -viewPort.width() * options.parallax_scale + 'px'
-				}, options.animation_time);
+				if(options.parallax_scale !== 0){
+					viewPort.p_animate({
+						'background-position-x': '+=' + -viewPort.width() * options.parallax_scale + 'px'
+					}, options.animation_time);
+				}
 			},
 			left : function(viewPort, options){
-				viewPort.animate({
-					'background-position-x': '+=' + viewPort.width() * options.parallax_scale + 'px'
-				}, options.animation_time);
+				if(options.parallax_scale !== 0){
+					viewPort.p_animate({
+						'background-position-x': '+=' + viewPort.width() * options.parallax_scale + 'px'
+					}, options.animation_time);
+				}
 			},
 			top : function(viewPort, options){
-				viewPort.animate({
-					'background-position-y': '+=' + -viewPort.width() * options.parallax_scale + 'px'
-				}, options.animation_time);
+				if(options.parallax_scale !== 0){
+					viewPort.p_animate({
+						'background-position-y': '+=' + -viewPort.width() * options.parallax_scale + 'px'
+					}, options.animation_time);
+				}
 			},
 			bottom : function(viewPort, options){
-				viewPort.animate({
-					'background-position-y': '+=' + viewPort.width() * options.parallax_scale + 'px'
-				}, options.animation_time);
+				if(options.parallax_scale !== 0){
+					viewPort.p_animate({
+						'background-position-y': '+=' + viewPort.width() * options.parallax_scale + 'px'
+					}, options.animation_time);
+				}
 			}
 		},
 		transitions : {
 			show :function(newPage, currentPage, viewPort, options, finished){
 				currentPage.hide();
-				newPage.show();
-				newPage.css({
+				newPage.show().css({
 					left : 0,
 					top : 0
 				});
@@ -41,7 +49,7 @@
 			},
 			right : function(newPage, currentPage, viewPort, options, finished){
 				Parallax.parallaxMethods.right(viewPort, options);
-				currentPage.animate({
+				currentPage.p_animate({
 					left : -viewPort.width()
 				}, options.animation_time, function(){
 					currentPage.hide();
@@ -49,13 +57,13 @@
 				newPage.show().css({
 					left : viewPort.width(),
 					top : 0
-				}).animate({
+				}).p_animate({
 					left : 0
 				}, options.animation_time, finished);
 			},
 			left : function(newPage, currentPage, viewPort, options, finished){
 				Parallax.parallaxMethods.left(viewPort, options);
-				currentPage.animate({
+				currentPage.p_animate({
 					left : viewPort.width()
 				}, options.animation_time, function(){
 					currentPage.hide();
@@ -63,13 +71,13 @@
 				newPage.show().css({
 					left : -viewPort.width(),
 					top : 0
-				}).animate({
+				}).p_animate({
 					left : 0
 				}, options.animation_time, finished);
 			},
 			up : function(newPage, currentPage, viewPort, options, finished){
 				Parallax.parallaxMethods.top(viewPort, options);
-				currentPage.animate({
+				currentPage.p_animate({
 					top : -viewPort.height()
 				}, options.animation_time, function(){
 					currentPage.hide();
@@ -77,13 +85,13 @@
 				newPage.show().css({
 					top : viewPort.height(),
 					left : 0
-				}).animate({
+				}).p_animate({
 					top : 0
 				}, options.animation_time, finished);
 			},
 			down : function(newPage, currentPage, viewPort, options, finished){
 				Parallax.parallaxMethods.bottom(viewPort, options);
-				currentPage.animate({
+				currentPage.p_animate({
 					top : viewPort.height()
 				}, options.animation_time, function(){
 					currentPage.hide();
@@ -91,7 +99,7 @@
 				newPage.show().css({
 					top : -viewPort.height(),
 					left : 0
-				}).animate({
+				}).p_animate({
 					top : 0
 				}, options.animation_time, finished);
 			}
@@ -99,9 +107,14 @@
 	};
 
 
-	//TODO : !!!
-	//Object.create Shim
-
+	//If the browser doesn't support Object.create
+	if (typeof Object.create === 'undefined') {
+		Object.create = function (o) {
+			function F() {};
+			F.prototype = o;
+			return new F();
+		};
+	}
 
 	//underscore Shim
 	var _ = _ || {
@@ -170,6 +183,12 @@
 
 			this.pageCount = 0;
 
+			if(this.options.use_css3_transitions){
+				//TODO: Add this
+			}else{
+				$.fn.p_animate = $.fn.animate;
+			}
+
 			if(this.options.auto_add_children){
 				this.addChildren();
 			}
@@ -192,12 +211,12 @@
 				self.trigger('before_transition', page);
 				self._inTransition = true;
 				if(self.options.resize_viewport_width){
-					self.element.animate({
+					self.element.p_animate({
 						width : page.element.width()
 					}, self.options.animation_time);
 				}
 				if(self.options.resize_viewport_height){
-					self.element.animate({
+					self.element.p_animate({
 						height : page.element.height()
 					}, self.options.animation_time);
 				}
@@ -277,7 +296,7 @@
 	var Page = Object.create(Archetype).methods({
 		initialize : function(element, viewPort, order)
 		{
-			var self      = this;
+			var self	  = this;
 			this.viewPort = viewPort;
 			this.element  = element.css('position', 'absolute').hide();
 			this.id       = this.element.attr('id') || 'page' + order;

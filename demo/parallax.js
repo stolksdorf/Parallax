@@ -2,11 +2,11 @@
 	window.Parallax = {
 		defaultOptions : {
 			animation_time         : 800,
-			parallax_scale         : 0.0,
+			parallax_scale         : 0.3,
 			auto_add_children      : true,
 			resize_viewport_width  : false,
 			resize_viewport_height : false,
-			use_css3_transitions   : false
+			use_css3               : false
 		},
 		parallaxMethods : {
 			right : function(viewPort, options){
@@ -170,6 +170,61 @@
 		}
 	};
 
+	//CSS3 Animations
+	jQuery.fn.css3animate = function(rules, p2, p3, p4){
+		console.log('animating');
+		var obj = $(this), delay = 400, easing = 'cubic-bezier(.02, .01, .47, 1)', callback;
+		if(typeof rules !== 'object') return this;
+		if(typeof p2 === 'number')   delay    = p2;
+		if(typeof p2 === 'function') callback = p2;
+		if(typeof p2 === 'string')   easing   = p2;
+
+		if(typeof p3 === 'number')   delay    = p3;
+		if(typeof p3 === 'function') callback = p3;
+		if(typeof p3 === 'string')   easing   = p3;
+
+		if(typeof p4 === 'number')   delay    = p4;
+		if(typeof p4 === 'function') callback = p4;
+		if(typeof p4 === 'string')   easing   = p4;
+
+		setTimeout(function(){
+			obj.css3('transition', 'all ' + delay + 'ms '+ easing +' 0s');
+			$.each(rules, function(ruleName, rule){
+				obj.css3(ruleName, rule);
+			});
+		},0);
+		setTimeout(function(){
+			obj.css3('transition', 'all 0s '+ easing +' 0s');
+			if(typeof callback === 'function') callback();
+		},delay);
+
+		return obj;
+	};
+
+	jQuery.fn.css3 = function(ruleName, rule){
+		var vendors = ['', '-moz-', '-ms-', '-webkit-'], obj = $(this);
+		var set = function(ruleName, rule){
+			$.each(vendors, function(index, vendor){
+				obj.css(vendor + ruleName, rule);
+			});
+		};
+		if(typeof ruleName === 'object'){
+			$.each(ruleName, function(ruleName, rule){
+				set(ruleName, rule);
+			});
+			return obj;
+		}else if(typeof rule === 'undefined'){
+			for(var i = 0; i < vendors.length; i++) {
+				if(typeof obj.css(vendors[i] + ruleName) === 'string'){
+					return obj.css(vendors[i] + ruleName);
+				}
+			}
+			return '';
+		}
+		set(ruleName, rule);
+		return obj;
+	};
+
 	var ViewPort = Object.create(Archetype).methods({
 		initialize : function(container, options)
 		{
@@ -183,8 +238,8 @@
 
 			this.pageCount = 0;
 
-			if(this.options.use_css3_transitions){
-				//TODO: Add this
+			if(this.options.use_css3){
+				$.fn.p_animate = $.fn.css3animate;
 			}else{
 				$.fn.p_animate = $.fn.animate;
 			}
@@ -302,7 +357,7 @@
 			this.id       = this.element.attr('id') || 'page' + order;
 			this.order    = order;
 
-			//add the abilities
+			//Add the transitions
 			_.each(Parallax.transitions, function(fn, funcName){
 				self[funcName] = function(){
 					self.trigger('transition', funcName, self);

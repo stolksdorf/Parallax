@@ -19,36 +19,7 @@ $(document).ready(function(){
 
 
 	Parallax.transitions.flipRight = function(newPage, currentPage, viewPort, options, finished){
-
-		//add the parallax css classes
-		//add the custom transition time property
-
-		newPage.addClass('parallax-flip-back').css({
-			left : 0,
-			top : 0,
-			'-webkit-transition' : 'all ' + options.animation_time + 'ms ease'
-		}).show();
-
-		currentPage.addClass('parallax-flip-front').css({
-			'-webkit-transition' : 'all ' + options.animation_time + 'ms ease'
-		});
-
-
-		setTimeout(function(){
-			newPage.addClass('flipRight');
-			currentPage.addClass('flipRight');
-			setTimeout(function(){
-				newPage.removeClass('parallax-flip-back').removeClass('flipRight').css('-webkit-transition', 'all 0 ease 0');
-				currentPage.removeClass('parallax-flip-front').removeClass('flipRight').css('-webkit-transition', 'all 0 ease 0').hide();
-				finished();
-				console.log('flippeing');
-			}, options.animation_time);
-		}, 0);
-
-	};
-
-
-	Parallax.transitions.flipRight = function(newPage, currentPage, viewPort, options, finished){
+		Parallax.parallaxMethods.right(viewPort, options);
 		newPage
 			.cssAnimate({
 				'transform':'rotateY(-180deg)',
@@ -69,15 +40,38 @@ $(document).ready(function(){
 			});
 	};
 
+	Parallax.transitions.cssRight = function(newPage, currentPage, viewPort, options, finished){
+		Parallax.parallaxMethods.right(viewPort, options);
+		currentPage.cssAnimate({
+			left : -viewPort.width()
+		}, options.animation_time, function(){
+			currentPage.hide();
+		});
+		newPage.show().css({
+			left : viewPort.width(),
+			top : 0
+		}).cssAnimate({
+			left : 0
+		}, options.animation_time, finished);
+	};
 
 
 
-	jQuery.fn.cssAnimate = function(rules, p2, p3){
-		var obj = $(this), delay = 400, callback;
+
+	jQuery.fn.cssAnimate = function(rules, p2, p3, p4){
+		var obj = $(this), delay = 400, easing = 'cubic-bezier(.02, .01, .47, 1)', callback;
 		if(typeof rules !== 'object') return this;
-		if(typeof p2 === 'number') delay = p2;
+		if(typeof p2 === 'number')   delay    = p2;
 		if(typeof p2 === 'function') callback = p2;
+		if(typeof p2 === 'string')   easing   = p2;
+
+		if(typeof p3 === 'number')   delay    = p3;
 		if(typeof p3 === 'function') callback = p3;
+		if(typeof p3 === 'string')   easing   = p3;
+
+		if(typeof p4 === 'number')   delay    = p4;
+		if(typeof p4 === 'function') callback = p4;
+		if(typeof p4 === 'string')   easing   = p4;
 
 		var vendors = ['', '-moz-', '-ms-', '-webkit-'];
 
@@ -87,13 +81,13 @@ $(document).ready(function(){
 			});
 		};
 		setTimeout(function(){
-			addRule('transition', 'all ' + delay + 'ms ease 0s');
+			addRule('transition', 'all ' + delay + 'ms '+ easing +' 0s');
 			$.each(rules, function(ruleName, rule){
 				addRule(ruleName, rule);
 			});
 		},0);
 		setTimeout(function(){
-			addRule('transition', 'all 0s ease 0s');
+			addRule('transition', 'all 0s '+ easing +' 0s');
 			if(typeof callback === 'function') callback();
 		},delay);
 
@@ -110,18 +104,18 @@ $(document).ready(function(){
 
 
 
-	viewPort = $('.container2').parallax({
+	viewPort = $('.container').parallax({
 		animation_time : 800,
 		parallax_scale : 0.3
 	});
 
 
 
-/*
+
 	setInterval( function(){
-		viewPort.next().right();
+		viewPort.next().cssRight();
 	}, 2000);
-*/
+
 
 
 $('.container2').mouseover(function(){

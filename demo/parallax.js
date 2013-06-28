@@ -172,7 +172,6 @@
 
 	//CSS3 Animations
 	jQuery.fn.css3animate = function(rules, p2, p3, p4){
-		console.log('animating');
 		var obj = $(this), delay = 400, easing = 'cubic-bezier(.02, .01, .47, 1)', callback;
 		if(typeof rules !== 'object') return this;
 		if(typeof p2 === 'number')   delay    = p2;
@@ -258,7 +257,7 @@
 
 			this.pages[newPage.id] = newPage;
 
-			newPage.on('transition', function(transitionType, page){
+			newPage.on('transition', function(transitionType, page, callback){
 				if(page.id=== self.current().id || self._inTransition){
 					return;
 				}
@@ -286,6 +285,7 @@
 						self._currentPage = page;
 						page.trigger('after_transition');
 						self.trigger('after_transition', page);
+						if(typeof callback === 'function'){ callback();}
 					}
 				);
 			});
@@ -359,8 +359,8 @@
 
 			//Add the transitions
 			_.each(Parallax.transitions, function(fn, funcName){
-				self[funcName] = function(){
-					self.trigger('transition', funcName, self);
+				self[funcName] = function(callback){
+					self.trigger('transition', funcName, self, callback);
 				};
 			});
 

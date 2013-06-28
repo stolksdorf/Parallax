@@ -62,7 +62,9 @@ $(document).ready(function(){
 
 
 	setInterval( function(){
-		viewPort.next().flipRight();
+		viewPort.next().flipRight(function(){
+			console.log('yup');
+		});
 	}, 2000);
 
 

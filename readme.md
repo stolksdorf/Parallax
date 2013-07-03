@@ -4,7 +4,7 @@ Effortlessly add transitions with parallaxing backgrounds to your webpage
 
 # Basic Use
 
-Parallax at it's core is a library for manipulating **pages** within a **viewport**. This can be as simple as an image carousel, or you can use it for an entire website's navigation. Parallax is built to be incredibly flexible and easy to use. Let's dive in.
+Parallax at it's core is a library for manipulating **Pages** within a **ViewPort**. This can be as simple as an image carousel, or you can use it for an entire website's navigation. Parallax is built to be incredibly flexible and easy to use. Let's dive in.
 
 ### Image Carousel
 
@@ -24,23 +24,24 @@ Time for something a bit trickier. When the view port is selected, the right and
 
 The viewport comes built in with keyboard events, so it's easy to listen to them.
 
-	var adventureTime = $(example).parallax({
+	var trickyExample = $(example).parallax({
+		animation_time : 400,
 		enable_arrow_events : true
 	});
 
-	adventureTime.on('leftArrow', function(){
-		adventureTime.previous().left();
+	trickyExample.on('leftArrow', function(){
+		trickyExample.previous().left();
 	});
-	adventureTime.on('rightArrow', function(){
-		adventureTime.next().right();
+	trickyExample.on('rightArrow', function(){
+		trickyExample.next().right();
 	});
-	adventureTime.on('upArrow', function(){
+	trickyExample.on('upArrow', function(){
 		//Parallax uses the HTML id to identify pages.
 		//To reference them directly, use VIEWPORT.pages.HTMLID
-		adventureTime.pages.Page1.flipUp();
+		trickyExample.pages.Page1.flipUp();
 	});
-	adventureTime.on('downArrow', function(){
-		adventureTime.last().flipDown();
+	trickyExample.on('downArrow', function(){
+		trickyExample.last().flipDown();
 	});
 
 # Options
@@ -50,7 +51,7 @@ The viewport comes built in with keyboard events, so it's easy to listen to them
 **auto_add_children**      (*default* true) - On initialization, Parallax will add each of the child elements as pages. Set this to false to completely control which elements are pages.
 **resize_viewport_width**  (*default* false) - Set to `true` to have the ViewPort's width resize to match the current page's width
 **resize_viewport_height** (*default* false) - Set to `true` to have the ViewPort's height resize to match the current page's height
-**use_css3**               (*default* false) - If true Parallax will use CSS3 transitions instead of jQuery animations.
+**use_css3**               (*default* false) - If true Parallax will use CSS3 transitions instead of jQuery animations. **Note:** Not all browsers support CSS3 transition, make sure you test!
 **enable_arrow_events**     (*default* false) - If true, the ViewPort will emit events whenever the user presses arrow keys
 
 	//Play around with the options!
@@ -106,7 +107,7 @@ Any HTML element can be added as a page to a ViewPort. Parallax will try and use
 
 # Events and Callbacks
 
-Parallax supports the use of simple events. It's incredibly easy to add listeners to any parallax page.
+PUT SOMETHING HERE
 
 ### Events
 

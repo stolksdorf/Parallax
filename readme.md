@@ -29,30 +29,38 @@ The viewport comes built in with keyboard events, so it's easy to listen to them
 		enable_arrow_events : true
 	});
 
-	trickyExample.on('leftArrow', function(){
-		trickyExample.previous().left();
-	});
-	trickyExample.on('rightArrow', function(){
-		trickyExample.next().right();
-	});
-	trickyExample.on('upArrow', function(){
-		//Parallax uses the HTML id to identify pages.
-		//To reference them directly, use VIEWPORT.pages.HTMLID
-		trickyExample.pages.Page1.flipUp();
-	});
-	trickyExample.on('downArrow', function(){
-		trickyExample.last().flipDown();
-	});
+	trickyExample
+		.on('leftArrow', function(){
+			trickyExample.previous().left();
+		})
+		.on('rightArrow', function(){
+			trickyExample.next().right();
+		})
+		.on('upArrow', function(){
+			//Parallax uses the HTML id to identify pages
+			//To reference them directly, use VIEWPORT.pages.HTMLID
+			trickyExample.pages.Page1.flipUp();
+		})
+		.on('downArrow', function(){
+			trickyExample.last().flipDown();
+		});
 
 # Options
 
 **animation_time** (*default* 800) - The time it takes to complete the animation
+
 **parallax_scale**         (*default* 0.3) - The scale at which the backbround will move relative to the content. Defaults to the background moving 30% of the content. Set it to `false` to disable parallaxing.
+
 **auto_add_children**      (*default* true) - On initialization, Parallax will add each of the child elements as pages. Set this to false to completely control which elements are pages.
+
 **resize_viewport_width**  (*default* false) - Set to `true` to have the ViewPort's width resize to match the current page's width
+
 **resize_viewport_height** (*default* false) - Set to `true` to have the ViewPort's height resize to match the current page's height
+
 **use_css3**               (*default* false) - If true Parallax will use CSS3 transitions instead of jQuery animations. **Note:** Not all browsers support CSS3 transition, make sure you test!
+
 **enable_arrow_events**     (*default* false) - If true, the ViewPort will emit events whenever the user presses arrow keys
+
 
 	//Play around with the options!
 	var optionSandbox = $(example).parallax({
@@ -119,18 +127,19 @@ By setting the `enable_arrow_events` option to true, the ViewPort will now emit 
 	var arrowNav = $(example).parallax({
 		enable_arrow_events : true
 	});
-	arrowNav.on('leftArrow', function(){
-		arrowNav.next().left();
-	});
-	arrowNav.on('rightArrow', function(){
-		arrowNav.next().right();
-	});
-	arrowNav.on('upArrow', function(){
-		arrowNav.next().up();
-	});
-	arrowNav.on('downArrow', function(){
-		arrowNav.next().down();
-	});
+	arrowNav
+		.on('leftArrow', function(){
+			arrowNav.next().left();
+		})
+		.on('rightArrow', function(){
+			arrowNav.next().right();
+		})
+		.on('upArrow', function(){
+			arrowNav.next().up();
+		})
+		.on('downArrow', function(){
+			arrowNav.next().down();
+		});
 
 
 ### Callbacks

@@ -57,6 +57,7 @@
 			this.__events__ = this.__events__ || {};
 			this.__events__[eventName] = this.__events__[eventName] || [];
 			this.__events__[eventName].push(event);
+			return this;
 		},
 		trigger : function(eventName){
 			this.__events__ = this.__events__ || {};
@@ -65,6 +66,7 @@
 					this.__events__[eventName][i].apply(this, Array.prototype.slice.apply(arguments).slice(1));
 				}
 			}
+			return this;
 		}
 	};
 

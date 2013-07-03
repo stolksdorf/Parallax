@@ -20,21 +20,46 @@ $(document).ready(function(){
 
 
 
-
+/*
 	viewPort = $('.container').parallax({
 		animation_time : 200,
 		parallax_scale : false,
-		capture_keypresses : true,
+		enable_arrow_events : true,
 	});
 
-	viewPort.on('leftArrow', function(){
-		alert('left arrow was hit!');
-	})
-
+/*
 
 	setInterval( function(){
 		viewPort.next().flipUp(function(){
 		});
 	}, 2000);
+*/
+
+
+
+
+var adventureTime = $('.container').parallax({
+	enable_arrow_events : true
+});
+
+adventureTime.on('leftArrow', function(){
+	adventureTime.last().left();
+});
+adventureTime.on('rightArrow', function(){
+	adventureTime.next().right();
+});
+adventureTime.on('upArrow', function(){
+	//Parallax uses the HTML id to identify pages.
+	//To reference them directly, use VIEWPORT.pages.HTMLID
+	adventureTime.pages.Page1.flipUp();
+});
+adventureTime.on('downArrow', function(){
+	adventureTime.last().flipDown();
+});
+
+
+
+
+
 
 });

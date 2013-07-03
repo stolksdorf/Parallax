@@ -141,7 +141,7 @@
 			resize_viewport_width  : false,
 			resize_viewport_height : false,
 			use_css3               : false,
-			capture_keypresses     : false
+			enable_arrow_events     : false
 		},
 		parallaxMethods : {
 			right : function(viewPort, options){
@@ -331,6 +331,7 @@
 		{
 			var self = this;
 			this.pages = {};
+			this.pageCount = 0;
 			this.options = _.extend(Parallax.defaultOptions, options);
 
 			this.element = container.css({
@@ -338,17 +339,14 @@
 				'overflow' : 'hidden'
 			});
 
-			this.pageCount = 0;
-
 			//Enable regular jQuery animation, or use css3 animations
+			$.fn.p_animate = $.fn.animate;
 			if(this.options.use_css3){
 				$.fn.p_animate = $.fn.css3animate;
-			}else{
-				$.fn.p_animate = $.fn.animate;
 			}
 
 			//Setup keyboard events
-			if(this.options.capture_keypresses){
+			if(this.options.enable_arrow_events){
 				this.element.keyup(function(event){
 					if(event.keyCode === 37){
 						self.trigger('leftArrow');
@@ -380,7 +378,7 @@
 			this.pages[newPage.id] = newPage;
 
 			newPage.on('transition', function(transitionType, page, callback){
-				if(page.id=== self.current().id || self._inTransition){
+				if(page.id === self.current().id || self._inTransition){
 					return;
 				}
 				page.trigger('before_transition');
@@ -470,6 +468,8 @@
 
 			return this.pages[nextPageId];
 		},
+
+		//TODO: Add a PRevious command
 	});
 
 	var Page = Object.create(Archetype).methods({
@@ -499,6 +499,7 @@
 		{
 			return this.viewPort.current().id === this.id;
 		},
+		//TODO: Add isFirst(), and isLast()
 	});
 
 	$.fn.parallax = function(options) {

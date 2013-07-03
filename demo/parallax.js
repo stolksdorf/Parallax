@@ -140,7 +140,8 @@
 			auto_add_children      : true,
 			resize_viewport_width  : false,
 			resize_viewport_height : false,
-			use_css3               : false
+			use_css3               : false,
+			capture_keypresses     : false
 		},
 		parallaxMethods : {
 			right : function(viewPort, options){
@@ -328,6 +329,7 @@
 	var ViewPort = Object.create(Archetype).methods({
 		initialize : function(container, options)
 		{
+			var self = this;
 			this.pages = {};
 			this.options = _.extend(Parallax.defaultOptions, options);
 
@@ -338,10 +340,26 @@
 
 			this.pageCount = 0;
 
+			//Enable regular jQuery animation, or use css3 animations
 			if(this.options.use_css3){
 				$.fn.p_animate = $.fn.css3animate;
 			}else{
 				$.fn.p_animate = $.fn.animate;
+			}
+
+			//Setup keyboard events
+			if(this.options.capture_keypresses){
+				this.element.keyup(function(event){
+					if(event.keyCode === 37){
+						self.trigger('leftArrow');
+					} else if(event.keyCode === 38){
+						self.trigger('upArrow');
+					} else if(event.keyCode === 39){
+						self.trigger('rightArrow');
+					} else if(event.keyCode === 40){
+						self.trigger('downArrow');
+					}
+				});
 			}
 
 			if(this.options.auto_add_children){

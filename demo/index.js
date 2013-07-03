@@ -24,12 +24,16 @@ $(document).ready(function(){
 	viewPort = $('.container').parallax({
 		animation_time : 200,
 		parallax_scale : false,
+		capture_keypresses : true,
 	});
+
+	viewPort.on('leftArrow', function(){
+		alert('left arrow was hit!');
+	})
 
 
 	setInterval( function(){
 		viewPort.next().flipUp(function(){
-			console.log('yup');
 		});
 	}, 2000);
 

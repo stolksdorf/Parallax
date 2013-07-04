@@ -20,11 +20,6 @@
 			}
 			return obj1;
 		},
-		each : function(obj, fn){
-			for(var propName in obj){
-				if(obj.hasOwnProperty(propName)){ fn(obj[propName], propName); }
-			}
-		},
 		map : function(obj, fn){
 			var result = [];
 			for(var propName in obj){
@@ -37,6 +32,32 @@
 				if(obj.hasOwnProperty(propName)){ memo = fn(memo, obj[propName], propName); }
 			}
 			return memo;
+		},
+		max : function(obj, fn){
+			var val, result;
+			for(var propName in obj){
+				if(obj.hasOwnProperty(propName)){
+					compareval = fn(obj[propName], propName);
+					if(typeof val === 'undefined' || compareval > val){
+						val = compareval;
+						result = obj[propName];
+					}
+				}
+			}
+			return result;
+		},
+		min : function(obj, fn){
+			var val, result;
+			for(var propName in obj){
+				if(obj.hasOwnProperty(propName)){
+					compareval = fn(obj[propName], propName);
+					if(typeof val === 'undefined' || compareval < val){
+						val = compareval;
+						result = obj[propName];
+					}
+				}
+			}
+			return result;
 		}
 	};
 
@@ -378,7 +399,7 @@
 		add : function(pageElement)
 		{
 			var self = this;
-			var newPage = Object.create(Page).initialize($(pageElement), this.element, this.pageCount);
+			var newPage = Object.create(Page).initialize($(pageElement), this, this.pageCount);
 			this.pageCount++;
 			this.pages[newPage.id] = newPage;
 			newPage.on('transition', function(transitionType, page, callback){
@@ -447,38 +468,34 @@
 		},
 		//Returns the next logical page in the order. Will loop around
 		next : function(){
-			if(this.pageCount === 0) return;
-			var pagesByOrder = _.reduce(this.pages, function(result, page, pageId){
-				result[pageId] = page.order;
+			var currentOrderNum = this.current().order;
+			var filterBigger = _.reduce(this.pages, function(result, page, pageId){
+				if(page.order > currentOrderNum){result[pageId] = page;}
 				return result;
 			},{});
-
-			var currentOrder = this.current().order,
-				max,
-				nextPageId = _.reduce(pagesByOrder, function(result, order, pageId){
-				if(order > currentOrder && (order < max || typeof max === 'undefined')){
-					max = order;
-					return pageId;
-				}
-				return result;
-			}, undefined);
-
-			//If we hit the last page, loop around to the beginning
-			if(typeof nextPageId === 'undefined'){
-				var min;
-				var nextPageId = _.reduce(pagesByOrder, function(result, order, pageId){
-					if(order < min || typeof min === 'undefined'){
-						min = order;
-						return pageId;
-					}
-					return result;
-				}, undefined);
-			}
-
-			return this.pages[nextPageId];
+			var findMin = _.min(filterBigger, function(page){return page.order;});
+			if(typeof findMin === 'undefined'){ return this.firstPage();}
+			return findMin;
 		},
-
-		//TODO: Add a Previous command
+		previous : function()
+		{
+			var currentOrderNum = this.current().order;
+			var filterSmaller = _.reduce(this.pages, function(result, page, pageId){
+				if(page.order < currentOrderNum){result[pageId] = page;}
+				return result;
+			},{});
+			var findMax = _.max(filterSmaller, function(page){return page.order;});
+			if(typeof findMax === 'undefined'){ return this.lastPage();}
+			return findMax;
+		},
+		firstPage : function()
+		{
+			return _.min(this.pages, function(page){return page.order;});
+		},
+		lastPage : function()
+		{
+			return _.max(this.pages, function(page){return page.order;});
+		},
 	});
 
 	var Page = Object.create(Archetype).methods({
@@ -491,7 +508,7 @@
 			this.order    = order;
 
 			//Add the transitions
-			_.each(Parallax.transitions, function(fn, funcName){
+			_.map(Parallax.transitions, function(fn, funcName){
 				self[funcName] = function(callback){
 					self.trigger('transition', funcName, self, callback);
 					return self;
@@ -509,7 +526,14 @@
 		{
 			return this.viewPort.current().id === this.id;
 		},
-		//TODO: Add isFirst(), and isLast()
+		isFirstPage  : function()
+		{
+			return this.viewPort.firstPage().id === this.id;
+		},
+		isLastPage  : function()
+		{
+			return this.viewPort.lastPage().id === this.id;
+		},
 	});
 
 	$.fn.parallax = function(options) {

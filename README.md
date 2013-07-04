@@ -1,31 +1,12 @@
-
-
-	//Queueing test
-	var queue = $(example).parallax({
-	  enable_arrow_events : true
-	});
-	queue.on('leftArrow', function(){
-	  console.log('test');
-	});
-	queue.on('downArrow', function(){
-	  console.log('test2');
-	});
-
-
-
-
-
 # Tell me about it
 
+Parallax is a Javascript library that uses jQuery to beautifully transition content on the page, while parallaxing it's background. At it's core it is a library for manipulating **Pages** within a **ViewPort**.
 
-
-# Basic Use
-
-Parallax is a Javascript library that uses jQuery to beautifully transition content on the page, while parallaxing it's background. At it's core it is a library for manipulating **Pages** within a **ViewPort**. This can be as simple as an image carousel, or as complex as an entire website's navigation using arrows keys and various events. Parallax is built to be incredibly flexible and easy to use. Let's dive in.
+This can be as simple as an image carousel, or as complex as an entire website's navigation using arrows keys and various events. Parallax is built to be incredibly flexible and easy to use. Let's dive in.
 
 ### Image Carousel
 
-Let's build a simple image carousel. Every 2 seconds wee want a new image to slide in from the right and loop around back to the beginning. All of our images are already stored within a container div called `example`.
+Let's build a simple carousel. Every 2 seconds we want a new page to slide in from the right and loop around back to the beginning. All of our pages are already stored within a container div called `example`.
 
 	//Create a parallax instance from our container div
 	var imageCarousel = $(example).parallax();
@@ -115,6 +96,9 @@ The following is a list of all the functions available for the `ViewPort` and ea
 
 **.previous()** - Returns the previous logical page using the page's `order` property. If it's the first page, it will loop around and return the last page.
 
+firstPage
+lastPage
+
 
 ## Page
 
@@ -128,7 +112,8 @@ The following is a list of all the functions available for the `ViewPort` and ea
 
 **.isCurrent()** - Returns a boolean on whether the page is being currently shown or not.
 
-
+isFirstPage
+isLastPage
 
 # Adding Pages
 

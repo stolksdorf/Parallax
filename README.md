@@ -15,11 +15,13 @@
 
 
 
+# Tell me about it
+
 
 
 # Basic Use
 
-Parallax at it's core is a library for manipulating **Pages** within a **ViewPort**. This can be as simple as an image carousel, or you can use it for an entire website's navigation. Parallax is built to be incredibly flexible and easy to use. Let's dive in.
+Parallax is a Javascript library that uses jQuery to beautifully transition content on the page, while parallaxing it's background. At it's core it is a library for manipulating **Pages** within a **ViewPort**. This can be as simple as an image carousel, or as complex as an entire website's navigation using arrows keys and various events. Parallax is built to be incredibly flexible and easy to use. Let's dive in.
 
 ### Image Carousel
 
@@ -27,21 +29,19 @@ Let's build a simple image carousel. Every 2 seconds wee want a new image to sli
 
 	//Create a parallax instance from our container div
 	var imageCarousel = $(example).parallax();
-
-	//Eveyr two seconds, grab the next page, and bring it in from the right
+	//Every two seconds, grab the next page, and bring it in from the right
 	setInterval(function(){
 		imageCarousel.next().right();
-		console.log('runninng');
 	},2000);
 
 ### Keyboard Navigation
 
-Time for something a bit trickier. When the view port is selected, the right and left arrow keys will move between the images. The up arrow will flip to the first image, and the down arrow will flip to the last page shown.
-
-The viewport comes built in with keyboard events, so it's easy to listen to them.
+Time for something a bit trickier. For this example we'll play around with ordering, keyboard events, and callbacks. When the view port is selected, the right and left arrow keys will move between the pages. The up arrow will flip to the first page, the down arrow will flip to the last page shown, and if we click on the ViewPort, we'll flip to Admiral Ackbar with an alert when it's done.
 
 	var trickyExample = $(example).parallax({
 		animation_time : 400,
+		//The viewport comes built in with keyboard events,
+		// so it's easy to listen to them.
 		enable_arrow_events : true
 	});
 
@@ -53,13 +53,20 @@ The viewport comes built in with keyboard events, so it's easy to listen to them
 			trickyExample.next().right();
 		})
 		.on('upArrow', function(){
-			//Parallax uses the HTML id to identify pages
-			//To reference them directly, use VIEWPORT.pages.HTMLID
-			trickyExample.pages.Page1.flipUp();
+
+			trickyExample.firstPage().flipUp();
 		})
 		.on('downArrow', function(){
 			trickyExample.last().flipDown();
 		});
+
+	$(example).click(function(){
+		//Parallax uses the HTML id to identify pages
+		//To reference them directly, use VIEWPORT.pages.HTMLID
+		trickyExample.pages.AdmiralAckbar.flipLeft(function(){
+			alert("it's a trap!");
+		});
+	})
 
 # Options
 

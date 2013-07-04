@@ -166,6 +166,7 @@
 			use_css3               : false,
 			enable_arrow_events    : false
 		},
+		//These methods are used within the transitions functions to parallax the background
 		parallaxMethods : {
 			right : function(viewPort, options){
 				if(options.parallax_scale){
@@ -396,7 +397,6 @@
 			if(this.options.auto_add_children){
 				this.addChildren();
 			}
-
 			this.next().show();
 			return this;
 		},
@@ -473,7 +473,7 @@
 			}
 			return this._currentPage;
 		},
-		//Returns the next logical page in the order. Will loop around
+		//Returns the next logical page in the order. Will loop around.
 		next : function(){
 			var currentOrderNum = this.current().order;
 			var filterBigger = _.reduce(this.pages, function(result, page, pageId){
@@ -521,7 +521,6 @@
 					return self;
 				};
 			});
-
 			return this;
 		},
 		hide : function()
@@ -529,15 +528,15 @@
 			this.element.hide();
 			return this;
 		},
-		isCurrent  : function()
+		isCurrent : function()
 		{
 			return this.viewPort.current().id === this.id;
 		},
-		isFirstPage  : function()
+		isFirstPage : function()
 		{
 			return this.viewPort.firstPage().id === this.id;
 		},
-		isLastPage  : function()
+		isLastPage : function()
 		{
 			return this.viewPort.lastPage().id === this.id;
 		},

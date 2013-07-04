@@ -3,7 +3,7 @@
 	//Queueing test
 	var queue = $(example).parallax();
 	queue.next().right()
-	queue.next().left();
+	queue.next().up();
 
 
 

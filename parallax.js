@@ -477,7 +477,7 @@
 			return this.pages[nextPageId];
 		},
 
-		//TODO: Add a PRevious command
+		//TODO: Add a Previous command
 	});
 
 	var Page = Object.create(Archetype).methods({
@@ -493,6 +493,7 @@
 			_.each(Parallax.transitions, function(fn, funcName){
 				self[funcName] = function(callback){
 					self.trigger('transition', funcName, self, callback);
+					return self;
 				};
 			});
 

@@ -182,6 +182,9 @@
 					left : 0,
 					top : 0
 				});
+				if(viewPort.height() === 0){
+					viewPort.height(newPage.height());
+				}
 				finished();
 			},
 			right : function(newPage, currentPage, viewPort, options, finished){
@@ -365,6 +368,7 @@
 			if(this.options.auto_add_children){
 				this.addChildren();
 			}
+
 			this.next().show();
 			return this;
 		},
@@ -380,7 +384,9 @@
 			this.pages[newPage.id] = newPage;
 
 			newPage.on('transition', function(transitionType, page, callback){
-				if(page.id === self.current().id || self._inTransition){
+				if(page.id === self.current().id){ return;}
+				if(self._inTransition){
+					//add queueing in here
 					return;
 				}
 				page.trigger('before_transition');

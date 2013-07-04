@@ -1,5 +1,5 @@
 
-Effortlessly add transitions with parallaxing backgrounds to your webpage
+
 
 
 # Basic Use
@@ -14,8 +14,9 @@ Let's build a simple image carousel. Every 2 seconds wee want a new image to sli
 	var imageCarousel = $(example).parallax();
 
 	//Eveyr two seconds, grab the next page, and bring it in from the right
-	setTimeout(function(){
+	setInterval(function(){
 		imageCarousel.next().right();
+		console.log('runninng');
 	},2000);
 
 ### Keyboard Navigation

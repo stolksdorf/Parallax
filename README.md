@@ -1,10 +1,15 @@
 
 
 	//Queueing test
-	var queue = $(example).parallax();
-	queue.next().right()
-	queue.next().up();
-
+	var queue = $(example).parallax({
+	  enable_arrow_events : true
+	});
+	queue.on('leftArrow', function(){
+	  console.log('test');
+	});
+	queue.on('downArrow', function(){
+	  console.log('test2');
+	});
 
 
 

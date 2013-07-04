@@ -373,17 +373,24 @@
 
 			//Setup keyboard events
 			if(this.options.enable_arrow_events){
-				this.element.keyup(function(event){
-					if(event.keyCode === 37){
-						self.trigger('leftArrow');
-					} else if(event.keyCode === 38){
-						self.trigger('upArrow');
-					} else if(event.keyCode === 39){
-						self.trigger('rightArrow');
-					} else if(event.keyCode === 40){
-						self.trigger('downArrow');
-					}
-				});
+				this.element
+					.attr('tabindex', '1')
+					.css('outline', 'none')
+					.keydown(function(event){
+						if(event.keyCode === 37){
+							self.trigger('leftArrow');
+							return false;
+						} else if(event.keyCode === 38){
+							self.trigger('upArrow');
+							return false;
+						} else if(event.keyCode === 39){
+							self.trigger('rightArrow');
+							return false;
+						} else if(event.keyCode === 40){
+							self.trigger('downArrow');
+							return false;
+						}
+					});
 			}
 
 			if(this.options.auto_add_children){
@@ -444,7 +451,7 @@
 				this.options,
 				function(){
 					self._inTransition = false;
-					if(typeof callback === 'function'){ callback();}
+					if(typeof callback === 'function'){callback();}
 					page.trigger('after_transition');
 					self.trigger('after_transition', page);
 				}

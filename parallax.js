@@ -143,8 +143,7 @@
 			resize_viewport_width  : false,
 			resize_viewport_height : false,
 			use_css3               : false,
-			enable_arrow_events    : false,
-			queueing               : true
+			enable_arrow_events    : false
 		},
 		parallaxMethods : {
 			right : function(viewPort, options){
@@ -331,7 +330,6 @@
 		}
 	};
 
-
 	var ViewPort = Object.create(Archetype).methods({
 		initialize : function(container, options)
 		{
@@ -367,18 +365,6 @@
 				});
 			}
 
-			//enable queueing
-			this.on('after_transition', function(){
-				console.log('resolveing', self.__queue__);
-				if(self.__queue__.length > 0){
-					self.transitionPage(
-						self.__queue__[0].transitionType,
-						self.__queue__[0].page,
-						self.__queue__[0].callback);
-					self.__queue__.splice(0,1);
-				}
-			});
-
 			if(this.options.auto_add_children){
 				this.addChildren();
 			}
@@ -394,9 +380,7 @@
 			var self = this;
 			var newPage = Object.create(Page).initialize($(pageElement), this.element, this.pageCount);
 			this.pageCount++;
-
 			this.pages[newPage.id] = newPage;
-
 			newPage.on('transition', function(transitionType, page, callback){
 				self.transitionPage(transitionType, page, callback);
 			});
@@ -412,25 +396,13 @@
 			return this;
 		},
 		transitionPage : function(transitionType, page, callback){
-			console.log('trans',transitionType);
-
 			var self = this;
 			if(page.id === this.current().id){return;}
+			if(this._inTransition){ return };
 
+			this._lastPage = this._currentPage;
+			this._currentPage = page;
 
-
-
-
-			if(this._inTransition){
-				//add to queue
-				console.log('adding to queue');
-				this.__queue__.push({
-					transitionType : transitionType,
-					page : page,
-					callback : callback
-				});
-				return;
-			}
 			page.trigger('before_transition');
 			this.trigger('before_transition', page);
 			this._inTransition = true;
@@ -446,26 +418,17 @@
 			}
 			Parallax.transitions[transitionType](
 				page.element,
-				this.current().element,
+				this.last().element,
 				this.element,
 				this.options,
 				function(){
 					self._inTransition = false;
-					self._lastPage = self._currentPage;
-					self._currentPage = page;
+					if(typeof callback === 'function'){ callback();}
 					page.trigger('after_transition');
 					self.trigger('after_transition', page);
-					if(typeof callback === 'function'){ callback();}
 				}
 			);
 		},
-
-		clearQueue : function()
-		{
-			this.__queue__ = [];
-			return this;
-		},
-
 		//Return the last page object
 		last : function()
 		{

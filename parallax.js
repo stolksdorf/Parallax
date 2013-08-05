@@ -20,11 +20,6 @@
 			}
 			return obj1;
 		},
-		each : function(obj, fn){
-			for(var propName in obj){
-				if(obj.hasOwnProperty(propName)){ fn(obj[propName], propName); }
-			}
-		},
 		map : function(obj, fn){
 			var result = [];
 			for(var propName in obj){
@@ -37,6 +32,32 @@
 				if(obj.hasOwnProperty(propName)){ memo = fn(memo, obj[propName], propName); }
 			}
 			return memo;
+		},
+		max : function(obj, fn){
+			var val, result, compareval;
+			for(var propName in obj){
+				if(obj.hasOwnProperty(propName)){
+					compareval = fn(obj[propName], propName);
+					if(typeof val === 'undefined' || compareval > val){
+						val = compareval;
+						result = obj[propName];
+					}
+				}
+			}
+			return result;
+		},
+		min : function(obj, fn){
+			var val, result, compareval;
+			for(var propName in obj){
+				if(obj.hasOwnProperty(propName)){
+					compareval = fn(obj[propName], propName);
+					if(typeof val === 'undefined' || compareval < val){
+						val = compareval;
+						result = obj[propName];
+					}
+				}
+			}
+			return result;
 		}
 	};
 
@@ -143,8 +164,9 @@
 			resize_viewport_width  : false,
 			resize_viewport_height : false,
 			use_css3               : false,
-			enable_arrow_events     : false
+			enable_arrow_events    : false
 		},
+		//These methods are used within the transitions functions to parallax the background
 		parallaxMethods : {
 			right : function(viewPort, options){
 				if(options.parallax_scale){
@@ -330,7 +352,6 @@
 		}
 	};
 
-
 	var ViewPort = Object.create(Archetype).methods({
 		initialize : function(container, options)
 		{
@@ -338,6 +359,9 @@
 			this.pages = {};
 			this.pageCount = 0;
 			this.options = _.extend(Parallax.defaultOptions, options);
+
+			//Dummy page is used to avoid 'undefined' when using next(), current(), etc.
+			this.dummyPage = Object.create(Page).initialize($(), this, -1);
 
 			this.element = container.css({
 				'position' : 'relative',
@@ -352,150 +376,165 @@
 
 			//Setup keyboard events
 			if(this.options.enable_arrow_events){
-				this.element.keyup(function(event){
-					if(event.keyCode === 37){
-						self.trigger('leftArrow');
-					} else if(event.keyCode === 38){
-						self.trigger('upArrow');
-					} else if(event.keyCode === 39){
-						self.trigger('rightArrow');
-					} else if(event.keyCode === 40){
-						self.trigger('downArrow');
-					}
-				});
+				this.element
+					.attr('tabindex', '1')
+					.css('outline', 'none')
+					.keydown(function(event){
+						if(event.keyCode === 37){
+							self.trigger('leftArrow');
+							return false;
+						} else if(event.keyCode === 38){
+							self.trigger('upArrow');
+							return false;
+						} else if(event.keyCode === 39){
+							self.trigger('rightArrow');
+							return false;
+						} else if(event.keyCode === 40){
+							self.trigger('downArrow');
+							return false;
+						}
+					});
 			}
 
 			if(this.options.auto_add_children){
 				this.addChildren();
 			}
-
-			this.next().show();
+			this.firstPage().show();
 			return this;
 		},
 		/**
 		 * Takes a jQuery element, and adds it as a page to the viewport
 		 */
-		add : function(pageElement)
+		add : function(pageElement, arg2)
 		{
-			var self = this;
-			var newPage = Object.create(Page).initialize($(pageElement), this.element, this.pageCount);
+			var self = this, id;
+			if(arg2 instanceof $){
+				id = pageElement;
+				pageElement = arg2;
+			}
+
+			var newPage = Object.create(Page).initialize(pageElement, this, this.pageCount, id);
 			this.pageCount++;
-
 			this.pages[newPage.id] = newPage;
-
 			newPage.on('transition', function(transitionType, page, callback){
-				if(page.id === self.current().id){ return;}
-				if(self._inTransition){
-					//add queueing in here
-					return;
-				}
-				page.trigger('before_transition');
-				self.trigger('before_transition', page);
-				self._inTransition = true;
-				if(self.options.resize_viewport_width){
-					self.element.p_animate({
-						width : page.element.width()
-					}, self.options.animation_time);
-				}
-				if(self.options.resize_viewport_height){
-					self.element.p_animate({
-						height : page.element.height()
-					}, self.options.animation_time);
-				}
-				Parallax.transitions[transitionType](
-					page.element,
-					self.current().element,
-					self.element,
-					self.options,
-					function(){
-						self._inTransition = false;
-						self._lastPage = self._currentPage;
-						self._currentPage = page;
-						page.trigger('after_transition');
-						self.trigger('after_transition', page);
-						if(typeof callback === 'function'){ callback();}
-					}
-				);
+				self.transitionPage(transitionType, page, callback);
 			});
+			if(this.pageCount === 1){ newPage.show();}
 			return newPage;
+		},
+		remove : function(pageId)
+		{
+			if(this.current().id === pageId){
+				this.next().show();
+			}
+			delete this.pages[pageId];
+			return this;
 		},
 		//Iterates over the view port and adds all child elements as pages
 		addChildren : function()
 		{
 			var self = this;
 			this.element.children().each(function(index, page){
-				self.add(page);
+				self.add($(page));
 			});
 			return this;
+		},
+		transitionPage : function(transitionType, page, callback){
+			var self = this;
+			if(page.id === this.current().id){return;}
+			if(this._inTransition){ return };
+
+			if(this.element.height() === 0){
+				this.element.height(page.element.height());
+			}
+
+			this._lastPage = this._currentPage;
+			this._currentPage = page;
+
+			page.trigger('before_transition');
+			this.trigger('before_transition', page);
+			this._inTransition = true;
+			if(this.options.resize_viewport_width){
+				this.element.p_animate({
+					width : page.element.width()
+				}, this.options.animation_time);
+			}
+			if(this.options.resize_viewport_height){
+				this.element.p_animate({
+					height : page.element.height()
+				}, this.options.animation_time);
+			}
+			Parallax.transitions[transitionType](
+				page.element,
+				this.last().element,
+				this.element,
+				this.options,
+				function(){
+					self._inTransition = false;
+					if(typeof callback === 'function'){callback();}
+					page.trigger('after_transition');
+					self.trigger('after_transition', page);
+				}
+			);
 		},
 		//Return the last page object
 		last : function()
 		{
-			if(typeof this._lastPage === 'undefined'){
-				return Object.create(Page).initialize($(), this, -1);
-			}
-			return this._lastPage;
+			return this._lastPage || this.dummyPage;
 		},
 		//Retuns the current page object
 		current : function()
 		{
-			if(typeof this._currentPage === 'undefined'){
-				return Object.create(Page).initialize($(), this, -1);
-			}
-			return this._currentPage;
+			return this._currentPage || this.dummyPage;;
 		},
-		//Returns the next logical page in the order. Will loop around
+		//Returns the next logical page in the order. Will loop around.
 		next : function(){
-			if(this.pageCount === 0) return;
-			var pagesByOrder = _.reduce(this.pages, function(result, page, pageId){
-				result[pageId] = page.order;
+			var currentOrderNum = this.current().order;
+			var filterBigger = _.reduce(this.pages, function(result, page, pageId){
+				if(page.order > currentOrderNum){result[pageId] = page;}
 				return result;
 			},{});
-
-			var currentOrder = this.current().order,
-				max,
-				nextPageId = _.reduce(pagesByOrder, function(result, order, pageId){
-				if(order > currentOrder && (order < max || typeof max === 'undefined')){
-					max = order;
-					return pageId;
-				}
-				return result;
-			}, undefined);
-
-			//If we hit the last page, loop around to the beginning
-			if(typeof nextPageId === 'undefined'){
-				var min;
-				var nextPageId = _.reduce(pagesByOrder, function(result, order, pageId){
-					if(order < min || typeof min === 'undefined'){
-						min = order;
-						return pageId;
-					}
-					return result;
-				}, undefined);
-			}
-
-			return this.pages[nextPageId];
+			var findMin = _.min(filterBigger, function(page){return page.order;});
+			if(typeof findMin === 'undefined'){ return this.firstPage();}
+			return findMin;
 		},
-
-		//TODO: Add a PRevious command
+		previous : function()
+		{
+			var currentOrderNum = this.current().order;
+			var filterSmaller = _.reduce(this.pages, function(result, page, pageId){
+				if(page.order < currentOrderNum){result[pageId] = page;}
+				return result;
+			},{});
+			var findMax = _.max(filterSmaller, function(page){return page.order;});
+			if(typeof findMax === 'undefined'){ return this.lastPage();}
+			return findMax;
+		},
+		firstPage : function()
+		{
+			return _.min(this.pages, function(page){return page.order;}) || this.dummyPage;
+		},
+		lastPage : function()
+		{
+			return _.max(this.pages, function(page){return page.order;}) || this.dummyPage;
+		},
 	});
 
 	var Page = Object.create(Archetype).methods({
-		initialize : function(element, viewPort, order)
+		initialize : function(element, viewPort, order, id)
 		{
 			var self	  = this;
 			this.viewPort = viewPort;
 			this.element  = element.css('position', 'absolute').hide();
-			this.id       = this.element.attr('id') || 'page' + order;
+			this.id       = id || this.element.attr('id') || 'page' + order;
 			this.order    = order;
 
 			//Add the transitions
-			_.each(Parallax.transitions, function(fn, funcName){
+			_.map(Parallax.transitions, function(fn, funcName){
 				self[funcName] = function(callback){
 					self.trigger('transition', funcName, self, callback);
+					return self;
 				};
 			});
-
 			return this;
 		},
 		hide : function()
@@ -503,11 +542,18 @@
 			this.element.hide();
 			return this;
 		},
-		isCurrent  : function()
+		isCurrent : function()
 		{
 			return this.viewPort.current().id === this.id;
 		},
-		//TODO: Add isFirst(), and isLast()
+		isFirstPage : function()
+		{
+			return this.viewPort.firstPage().id === this.id;
+		},
+		isLastPage : function()
+		{
+			return this.viewPort.lastPage().id === this.id;
+		},
 	});
 
 	$.fn.parallax = function(options) {

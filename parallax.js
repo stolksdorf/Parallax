@@ -34,7 +34,7 @@
 			return memo;
 		},
 		max : function(obj, fn){
-			var val, result;
+			var val, result, compareval;
 			for(var propName in obj){
 				if(obj.hasOwnProperty(propName)){
 					compareval = fn(obj[propName], propName);
@@ -47,7 +47,7 @@
 			return result;
 		},
 		min : function(obj, fn){
-			var val, result;
+			var val, result, compareval;
 			for(var propName in obj){
 				if(obj.hasOwnProperty(propName)){
 					compareval = fn(obj[propName], propName);
@@ -356,10 +356,12 @@
 		initialize : function(container, options)
 		{
 			var self = this;
-			this.__queue__ = [];
 			this.pages = {};
 			this.pageCount = 0;
 			this.options = _.extend(Parallax.defaultOptions, options);
+
+			//Dummy page is used to avoid 'undefined' when using next(), current(), etc.
+			this.dummyPage = Object.create(Page).initialize($(), this, -1);
 
 			this.element = container.css({
 				'position' : 'relative',
@@ -397,29 +399,43 @@
 			if(this.options.auto_add_children){
 				this.addChildren();
 			}
-			this.next().show();
+			this.firstPage().show();
 			return this;
 		},
 		/**
 		 * Takes a jQuery element, and adds it as a page to the viewport
 		 */
-		add : function(pageElement)
+		add : function(pageElement, arg2)
 		{
-			var self = this;
-			var newPage = Object.create(Page).initialize($(pageElement), this, this.pageCount);
+			var self = this, id;
+			if(arg2 instanceof $){
+				id = pageElement;
+				pageElement = arg2;
+			}
+
+			var newPage = Object.create(Page).initialize(pageElement, this, this.pageCount, id);
 			this.pageCount++;
 			this.pages[newPage.id] = newPage;
 			newPage.on('transition', function(transitionType, page, callback){
 				self.transitionPage(transitionType, page, callback);
 			});
+			if(this.pageCount === 1){ newPage.show();}
 			return newPage;
+		},
+		remove : function(pageId)
+		{
+			if(this.current().id === pageId){
+				this.next().show();
+			}
+			delete this.pages[pageId];
+			return this;
 		},
 		//Iterates over the view port and adds all child elements as pages
 		addChildren : function()
 		{
 			var self = this;
 			this.element.children().each(function(index, page){
-				self.add(page);
+				self.add($(page));
 			});
 			return this;
 		},
@@ -427,6 +443,10 @@
 			var self = this;
 			if(page.id === this.current().id){return;}
 			if(this._inTransition){ return };
+
+			if(this.element.height() === 0){
+				this.element.height(page.element.height());
+			}
 
 			this._lastPage = this._currentPage;
 			this._currentPage = page;
@@ -460,18 +480,12 @@
 		//Return the last page object
 		last : function()
 		{
-			if(typeof this._lastPage === 'undefined'){
-				return Object.create(Page).initialize($(), this, -1);
-			}
-			return this._lastPage;
+			return this._lastPage || this.dummyPage;
 		},
 		//Retuns the current page object
 		current : function()
 		{
-			if(typeof this._currentPage === 'undefined'){
-				return Object.create(Page).initialize($(), this, -1);
-			}
-			return this._currentPage;
+			return this._currentPage || this.dummyPage;;
 		},
 		//Returns the next logical page in the order. Will loop around.
 		next : function(){
@@ -497,21 +511,21 @@
 		},
 		firstPage : function()
 		{
-			return _.min(this.pages, function(page){return page.order;});
+			return _.min(this.pages, function(page){return page.order;}) || this.dummyPage;
 		},
 		lastPage : function()
 		{
-			return _.max(this.pages, function(page){return page.order;});
+			return _.max(this.pages, function(page){return page.order;}) || this.dummyPage;
 		},
 	});
 
 	var Page = Object.create(Archetype).methods({
-		initialize : function(element, viewPort, order)
+		initialize : function(element, viewPort, order, id)
 		{
 			var self	  = this;
 			this.viewPort = viewPort;
 			this.element  = element.css('position', 'absolute').hide();
-			this.id       = this.element.attr('id') || 'page' + order;
+			this.id       = id || this.element.attr('id') || 'page' + order;
 			this.order    = order;
 
 			//Add the transitions

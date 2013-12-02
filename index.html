@@ -1,129 +1,26 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
-<body>
-	<div class='container' data-block='project'>
-		<div class='sideBar' data-block='sideBar'>
-			<div class='sideBar__logo card' data-element='logo'>
-				<i class='sideBar__logo__icon' data-element='logoIcon'></i>
-				<i class='sideBar__logo__up icon-arrow-up' data-element='logoUp'></i>
-			</div>
-			<div class='sideBar__nav' data-element='nav'></div>
-		</div>
-		<div class='project'>
-			<div class='project__main'>
-				<div class='project__name'             data-element='name'></div>
-				<div class='project__description grey' data-element='description'></div>
-				<div class='project__icons'            data-element='iconContainer'></div>
-			</div>
+<head>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js" ></script>
+	<script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+	<script src="http://cdn.jsdelivr.net/codemirror/3.14.0/codemirror.min.js" ></script>
+	<script>var PaintJob=function(e){$(document).ready(function(){$.ajax({url:"https://dl.dropboxusercontent.com/u/562800/paintjob.compiled.html",success:function(t){$("body").append(t);Object.create(PaintJob_Block_Project).initialize(e)}})})}</script>
+</head>
+<body></body>
+</html>
 
-			<div class='project__example' data-element='example'></div>
-		</div>
-		<div class='documentation' data-element='documentation'></div>
-	</div>
-	<div class='footer'>
-		<div class='footer__content'>
-			<div class='footer__about'>
-				<h3>About</h3>
-				<p>
-					This page was generated using <a href='google.com'>Paintjob</a>, a framework that converts Github repos into beautiful demo pages.
-				</p>
-				<p>
-					Everything you see here was written by Scott Tolksdorf. Check out more cool stuff below.
-				</p>
-				<p class='footer__about__icons'>
-					<a target='_blank' href='http://stolksdorf.com'         ><i class='icon-home'></i></a>
-					<a target='_blank' href='https://github.com/stolksdorf' ><i class='icon-github'></i></a>
-					<a target='_blank' href='http://stolksdorf.throwww.com/'><i class='icon-pencil'></i></a>
-					<a target='_blank' href='https://twitter.com/stolksdorf'><i class='icon-twitter'></i></a>
-					<a target='_blank' href='https://www.facebook.com/scott.tolksdorf'><i class='icon-facebook'></i></a>
-					<a target='_blank' href='http://ca.linkedin.com/pub/scott-tolksdorf/19/132/53a'><i class='icon-linkedin'></i></a>
-				</p>
-			</div>
-
-			<div class='footer__license'>
-				<h2>License</h2>
-				<p>
-					All the work I release is under <a target='_blank' href='http://www.wtfpl.net'>WTFPL</a>.
-				</p>
-				<p>
-					I believe that the more open we are with information, the more innovation we'll see. In short, do whatever you want with this, just don't say that you made it.
-				</p>
-				<p>
-					Full license text <a target='_blank' href='http://www.wtfpl.net/txt/copying/'>here</a>.
-				</p>
-			</div>
-		</div>
-	</div>
-
-	<!-- Schematics -->
-
-	<a data-schematic='project_icon' target='_blank' class='project__icon card btn hint--bottom'>
-		<i data-element='iconElement'></i>
-	</a>
-
-	<div class='codeblock' data-schematic='code_block' >
-		<div data-element='editor'></div>
-		<div class='codeblock__output' data-element='outputContainer' style='display:none'>
-			<div data-element='output'></div>
-			<div data-element='outputError' class='codeblock__output__errorText' style='display:none'></div>
-		</div>
-		<div class='codeblock__runButton btn green' data-element='runButton'>Run</div>
-		<div style='clear:both'></div>
-	</div>
-
-</body>
-
-<!-- Libraries -->
-<script type="text/javascript" src="paintjob/libs/jq.js"></script>
-<script type="text/javascript" src="paintjob/libs/underscore.js"></script>
-<script type="text/javascript" src="paintjob/libs/moment.js"></script>
-<script type="text/javascript" src="paintjob/libs/archetype.js"></script>
-<script type="text/javascript" src="paintjob/libs/markdownconvertor.js"></script>
-<link href="http://netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css" rel="stylesheet">
-<link rel="Stylesheet" type="text/css" href="paintjob/libs/hint.css" />
-
-<!-- CodeMirror -->
-<script src="paintjob/libs/codemirror/cm.js"></script>
-<link  href="paintjob/libs/codemirror/cm.css" rel="stylesheet">
-<script src="paintjob/libs/codemirror/javascript.js"></script>
-
-<!-- Fonts -->
-<link href='http://fonts.googleapis.com/css?family=Lato:400,900' rel='stylesheet' type='text/css'>
-
-<!-- Style -->
-<link rel="Stylesheet" type="text/css" href="paintjob/style/reset.css" />
-<link rel="Stylesheet" type="text/css" href="paintjob/style/base.css" />
-<link rel="Stylesheet" type="text/css" href="paintjob/style/paintjob.css" />
-
-<script type="text/javascript" src="paintjob/block/Project.js"></script>
-<script type="text/javascript" src="paintjob/block/Icon.js"></script>
-<script type="text/javascript" src="paintjob/block/Codeblock.js"></script>
-<script type="text/javascript" src="paintjob/block/Sidebar.js"></script>
-
-<script type="text/javascript" src="paintjob/paintjob.js"></script>
-
-
+<script type="text/javascript" src="parallax.js"></script>
 
 <!--
-
 	*****************************************
 	****        PROJECT CODE HERE        ****
 	*****************************************
 -->
 
-<script type="text/javascript" src="parallax.js"></script>
-
-<div style='background-color:grey' data-schematic='code_html'>
-	<div style='color:red'>Test1</div>
-	<div style='color:blue'>Test2</div>
-</div>
-
-<div data-schematic='example_html'>
-	<!-- HTML code for your example goes in here -->
-</div>
-
 <script>
-	CreatePaintJob({
+	PaintJob({
+		use_local : true,
+
 		user :'stolksdorf',
 		repo :'Parallax',
 
@@ -168,9 +65,288 @@
 			console.log('example running');
 
 		},
-
-		use_local : true
 	});
 </script>
 
-</html>
+<!-- Project Schematics -->
+<!-- This html will be use for each code example in your project -->
+<div data-schematic='code_html'>
+	<div style='color:red'>Test1</div>
+	<div style='color:blue'>Test2</div>
+</div>
+
+<!-- This html will be use for the example at the top of the page -->
+<div data-schematic='example_html'>
+	<!-- HTML code for your example goes in here -->
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+TODO
+- current and last page should be stored as ids
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script type='text/template'>
+** Note: This library is still under construction **
+
+# What is it
+
+Parallax is a Javascript library that uses jQuery to beautifully transition content on the page, while parallaxing it's background. At it's core it is a library for manipulating **Pages** within a **ViewPort**. This can be as simple as an image carousel, or as complex as an entire website's navigation using arrows keys and various events. Parallax is built to be incredibly flexible and easy to use.
+
+Here's an example of using Parallax.js to build a simple image Carousel
+
+	<div id='carousel_viewport'>
+		<div>Just some boring text</div>
+		<div>More boring text</div>
+	</div>
+
+<!-- -->
+
+	//Create a parallax instance from our container div
+	var imageCarousel = $('#carousel_viewport').parallax();
+
+	//Every two seconds, grab the next page, and bring it in from the right
+	setInterval(function(){
+		imageCarousel.next().right();
+	},2000);
+
+
+# Options
+
+`animation_time : 800`           - The time it takes to complete the animation
+
+`parallax_scale : 0.3`           - Scale at which the background moves relative to the page. Default 30%. Set it to `false` to disable parallaxing.
+
+`auto_add_children : true`       - On initialization, Parallax will add each of the child elements as pages. Set this to false to completely control which elements are pages.
+
+`resize_viewport_width : false`  - Set to `true` to have the ViewPort's width resize to match the current page's width
+
+`resize_viewport_height : false` - Set to `true` to have the ViewPort's height resize to match the current page's height
+
+`use_css3 : false`               - If true Parallax will use CSS3 transitions instead of jQuery animations. **Note:** Not all browsers support CSS3 transition, make sure you test!
+
+`enable_arrow_events : false`    - If true, the ViewPort will emit events whenever the user presses arrow keys while the viewport is focused
+
+Try out different options here.
+
+	<div id='optionSandbox_viewport'>
+		<div id='test'>Just some boring text</div>
+		<div>More boring text</div>
+	</div>
+
+<!-- -->
+
+	//Play around with the options!
+	var optionSandbox = $('#optionSandbox_viewport').parallax({
+		animation_time         : 800,
+		parallax_scale         : 0.3,
+		auto_add_children      : true,
+		resize_viewport_width  : false,
+		resize_viewport_height : false,
+		enable_arrow_events    : false,
+		use_css3               : false
+	});
+	optionSandbox.next().right();
+
+#Commands
+## ViewPort Object
+
+`.pages` - Key/Value pair list of each page object and it's id. Parallax will use the page's HTML id if available. If not, it will generate an id for it. Useful for accessing specific pages, `viewPort.pages.slothImage.right()`
+
+`.add(jQueryObject), .add(id, jQueryObject)` - Consumes a jQuery object and adds it as a page to the ViewPort. Returns the created page object.
+
+`.remove(id, [removeFromDom])`  - Removes a page from the Viewport and the DOM with the given id. If false is passed in for removeFromDom, then the page's DOM element will not be removed.
+
+`.current()` - Returns the current page object
+
+`.last()` - Returns the last page object that was shown.
+
+`.next()` - Returns the next logical page using the page's `order` property. If it's the last page, it will loop around and return the first page.
+
+`.previous()` - Returns the previous logical page using the page's `order` property. If it's the first page, it will loop around and return the last page.
+
+`.initialPage()` - Returns the page with the lowest page order
+
+`.finalPage()`  - Returns the page with the highest page order
+
+
+
+## Page Object
+
+`transitions` - Every page will adopt each method in the `Parallax.transitions` object. Calling these on a page will use that function and transition it as the currently viewed page. Currently supported transitions are `.right()`, `.left()`, `.up()`, and `.down()`. CSS3-support only: `.flipRight()`, `.flipLeft()`, `.flipUp()`, and `.flipDown()`.
+
+`.order` - Every page is given a numerical value as it's `order` when it's created. ViewPort commands such as `next` and `previous` use this to determine the ordering of your pages. Parallax will simply maintain the ordering at which you added pages, however feel free to change these values to fine tune the order you want.
+
+`.show()` - Technically a `transition` function, this will simply show the page instantly and make it current.
+
+`.hide()` - Hides the page from view.
+
+`.isCurrent()` - Returns true if this page is being currently shown
+
+`.isInitialPage()` - Returns true if this page has the lowest order
+
+`isFinalPage()` - Returns true if this page has the highest order
+
+
+#Events and Callbacks
+
+##Events
+Parallax supports [Backbone.js]() style events, using `.on(eventName, fn)`.
+
+	//Listen to events like this
+	var eventViewport = $(example).parallax();
+	eventViewport.on('afterTransition:top', function(){
+		alert('it worked!');
+	});
+	eventViewport.next().top();
+
+### Viewport Events
+`beforeTransition` - Fires before any transistion
+
+`beforeTransition:[type]` - Fires before transistions of a given type (right, left, up...)
+
+`afterTransition` - Fires after any transistion
+
+`afterTransition:[type]` - Fires after transistions of a given type (right, left, up...)
+
+`add` - Fires whenever a page is added
+
+`remove` - Fires whenever a page is removed
+
+`leftArrow`, `upArrow`, `rightArrow`, `downArrow` - These only fire if the option `enable_arrow_events` is set to true
+
+### Page Events
+`beforeTransition` - Fires before any transistion for that page
+
+`beforeTransition:[type]` - Fires before transistions of a given type (right, left, up...)
+
+`afterTransition` - Fires after any transistion
+
+`afterTransition:[type]` - Fires after transistions of a given type (right, left, up...)
+
+`remove` - Fires whenever this page is removed
+
+## Arrow Key Events
+By setting the `enable_arrow_events` option to true, the ViewPort will now emit events whenever the user presses the arrow keys while the Viewport is in focus.
+
+	<div id='arrowNav_viewport'>
+		<div>You're</div>
+		<div>Awesome</div>
+	</div>
+
+<!-- -->
+
+	var arrowNav = $('#arrowNav_viewport').parallax({
+		enable_arrow_events : true
+	});
+	arrowNav
+		.on('leftArrow', function(){
+			arrowNav.next().left();
+		})
+		.on('rightArrow', function(){
+			arrowNav.next().right();
+		})
+		.on('upArrow', function(){
+			arrowNav.next().up();
+		})
+		.on('downArrow', function(){
+			arrowNav.next().down();
+		});
+
+
+## Callbacks
+Parallax supports callbacks on every transition function
+
+	var callbackViewport = $(example).parallax();
+	eventViewport.next().bottom(function(){
+		alert('callbacks are nifty');
+	});
+
+
+
+
+# Adding Pages
+
+Using the `auto_add_children` option, all child elements of the viewport are added as pages on the creation of the Parallax object. However this may not always be what you need. Any HTML element can be added as a page to a ViewPort.
+
+	<div id='addPage_viewport'>
+		<div id='coolPage1'>test1</div>
+		<div id='notsocoolPage3'>test2</div>
+		<div id='coolPage4'>test3</div>
+		<div id='coolPage5'>test5</div>
+	</div>
+
+
+<!-- -->
+
+	var addPageViewport = $('#addPage_viewport').parallax({
+		auto_add_children:false
+	});
+
+	addPageViewport.add($('#coolPage1'));
+	var thisOne = addPageViewport.add($('#coolPage5'));
+	addPageViewport.add('superCoolPage', $('#coolPage4'));
+
+	thisOne.right(function(){
+		addPageViewport.pages.superCoolPage.left();
+	})
+
+
+
+
+
+
+# Advanced Usage
+
+## Changing Ordering
+
+## Custom Transitions
+
+## CSS3 Transitions
+
+#Improvements over the old library
+* Use a target div, instead of the window
+* Added css3 animation support
+* Page ordering allows for intutive commands like getting the next page or the first page
+* Keyboard arrow support
+* Easier page adding
+* Full use of events
+* Custom animation support
+
+# TODO
+* Separate id creation from page ordering
+* Make archetype a mixin
+* Make css3 internal and not extend jQuery
+* add additonal events to both page and view port
+* Getter and setter on page order
+* add the ability to remove events
+* current and last page should be stored as ids
+
+
+
+</script>

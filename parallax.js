@@ -61,10 +61,12 @@
 		}
 	};
 
+	var pageIdCounter = 0;
+
 	/**
 	 * Base object for events and inheritance
 	 */
-	var Archetype = {
+	var EventObj = {
 		initialize : function(){
 			return this;
 		},
@@ -352,7 +354,7 @@
 		}
 	};
 
-	var ViewPort = Object.create(Archetype).methods({
+	var ViewPort = Object.create(EventObj).methods({
 		initialize : function(container, options)
 		{
 			var self = this;
@@ -360,7 +362,7 @@
 			this.pageCount = 0;
 			this.options = _.extend(Parallax.defaultOptions, options);
 
-			//Dummy page is used to avoid 'undefined' when using next(), current(), etc.
+			//Dummy page is used to avoid 'undefined' when using next(), current() when it returns a non-exsistent page
 			this.dummyPage = Object.create(Page).initialize($(), this, -1);
 
 			this.element = container.css({
@@ -399,7 +401,10 @@
 			if(this.options.auto_add_children){
 				this.addChildren();
 			}
-			this.firstPage().show();
+			this.initialPage().show();
+			if(this.element.height() === 0 && this.initialPage().element){
+				this.element.height(this.initialPage().element.height());
+			}
 			return this;
 		},
 		/**
@@ -413,7 +418,7 @@
 				pageElement = arg2;
 			}
 
-			var newPage = Object.create(Page).initialize(pageElement, this, this.pageCount, id);
+			var newPage = Object.create(Page).initialize(pageElement, this, this.finalPage().order + 1, id);
 			this.pageCount++;
 			this.pages[newPage.id] = newPage;
 			newPage.on('transition', function(transitionType, page, callback){
@@ -422,12 +427,17 @@
 			if(this.pageCount === 1){ newPage.show();}
 			return newPage;
 		},
-		remove : function(pageId)
+		remove : function(pageId, removeFromDom)
 		{
+			this.pages[pageId].trigger('remove');
 			if(this.current().id === pageId){
 				this.next().show();
 			}
+			if(removeFromDom !== false){
+				this.pages[pageId].element.remove()
+			}
 			delete this.pages[pageId];
+			this.trigger('remove');
 			return this;
 		},
 		//Iterates over the view port and adds all child elements as pages
@@ -444,15 +454,13 @@
 			if(page.id === this.current().id){return;}
 			if(this._inTransition){ return };
 
-			if(this.element.height() === 0){
-				this.element.height(page.element.height());
-			}
-
-			this._lastPage = this._currentPage;
+			this._finalPage = this._currentPage;
 			this._currentPage = page;
 
-			page.trigger('before_transition');
-			this.trigger('before_transition', page);
+			page.trigger('beforeTransition');
+			this.trigger('beforeTransition', page);
+			page.trigger('beforeTransition:' + transitionType);
+			this.trigger('beforeTransition:' + transitionType, page);
 			this._inTransition = true;
 			if(this.options.resize_viewport_width){
 				this.element.p_animate({
@@ -472,15 +480,17 @@
 				function(){
 					self._inTransition = false;
 					if(typeof callback === 'function'){callback();}
-					page.trigger('after_transition');
-					self.trigger('after_transition', page);
+					page.trigger('afterTransition');
+					self.trigger('afterTransition', page);
+					page.trigger('afterTransition:' + transitionType);
+					this.trigger('afterTransition:' + transitionType, page);
 				}
 			);
 		},
 		//Return the last page object
 		last : function()
 		{
-			return this._lastPage || this.dummyPage;
+			return this._finalPage || this.dummyPage;
 		},
 		//Retuns the current page object
 		current : function()
@@ -495,7 +505,7 @@
 				return result;
 			},{});
 			var findMin = _.min(filterBigger, function(page){return page.order;});
-			if(typeof findMin === 'undefined'){ return this.firstPage();}
+			if(typeof findMin === 'undefined'){ return this.initialPage();}
 			return findMin;
 		},
 		previous : function()
@@ -506,26 +516,26 @@
 				return result;
 			},{});
 			var findMax = _.max(filterSmaller, function(page){return page.order;});
-			if(typeof findMax === 'undefined'){ return this.lastPage();}
+			if(typeof findMax === 'undefined'){ return this.finalPage();}
 			return findMax;
 		},
-		firstPage : function()
+		initialPage : function()
 		{
 			return _.min(this.pages, function(page){return page.order;}) || this.dummyPage;
 		},
-		lastPage : function()
+		finalPage : function()
 		{
 			return _.max(this.pages, function(page){return page.order;}) || this.dummyPage;
 		},
 	});
 
-	var Page = Object.create(Archetype).methods({
+	var Page = Object.create(EventObj).methods({
 		initialize : function(element, viewPort, order, id)
 		{
 			var self	  = this;
 			this.viewPort = viewPort;
 			this.element  = element.css('position', 'absolute').hide();
-			this.id       = id || this.element.attr('id') || 'page' + order;
+			this.id       = id || this.element.attr('id') || 'page' + ++pageIdCounter;
 			this.order    = order;
 
 			//Add the transitions
@@ -546,13 +556,13 @@
 		{
 			return this.viewPort.current().id === this.id;
 		},
-		isFirstPage : function()
+		isInitialPage : function()
 		{
-			return this.viewPort.firstPage().id === this.id;
+			return this.viewPort.initialPage().id === this.id;
 		},
-		isLastPage : function()
+		isFinalPage : function()
 		{
-			return this.viewPort.lastPage().id === this.id;
+			return this.viewPort.finalPage().id === this.id;
 		},
 	});
 

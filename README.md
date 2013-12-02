@@ -4,7 +4,14 @@
 
 Parallax is a Javascript library that uses jQuery to beautifully transition content on the page, while parallaxing it's background. At it's core it is a library for manipulating **Pages** within a **ViewPort**.
 
-This can be as simple as an image carousel, or as complex as an entire website's navigation using arrows keys and various events. Parallax is built to be incredibly flexible and easy to use. Let's dive in.
+This can be as simple as an image carousel, or as complex as an entire website's navigation using arrows keys and various events. Parallax is built to be incredibly flexible and easy to use.
+
+Here's an example of using Parallax.js to build a simple image Carousel
+
+	<div id='viewport'>
+		<div>Just some boring text</div>
+
+	</div>
 
 ### Image Carousel
 
@@ -178,6 +185,15 @@ Whenever you call a transition on a page you can always add a callback to it for
 
 ## CSS3 Transitions
 
+#Improvements over the old library
+* Use a target div, instead of the window
+* Added css3 animation support
+* Page ordering allows for intutive commands like getting the next page or the first page
+* Keyboard arrow support
+* Easier page adding
+* Full use of events
+* Custom animation support
+
 # TODO
 * Separate id creation from page ordering
 * Make archetype a mixin
@@ -185,3 +201,4 @@ Whenever you call a transition on a page you can always add a callback to it for
 * add additonal events to both page and view port
 * Getter and setter on page order
 * add the ability to remove events
+* current and last page should be stored as ids

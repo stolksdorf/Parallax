@@ -1,14 +1,10 @@
 ;(function($){
-	/**
-	 * Shim for Object.create, in case the browser doesn't support it
-	 */
-	if (typeof Object.create === 'undefined') {
-		Object.create = function (o) {
-			function F() {};
-			F.prototype = o;
-			return new F();
-		};
-	}
+	//Shim for Object.create, in case the browser doesn't support it
+	Object.create = Object.create || function(proto) {
+		function Obj(){};
+		Obj.prototype = proto;
+		return new Obj();
+	};
 
 	/**
 	 * Just a shim for the used parts of Underscore
@@ -64,7 +60,7 @@
 	/**
 	 * Base object for events and inheritance
 	 */
-	var Archetype = {
+	var BaseObject = {
 		initialize : function(){
 			return this;
 		},
@@ -91,66 +87,7 @@
 		}
 	};
 
-	/**
-	 * A css3 version of jQuery's animate()
-	 * takes a set of css rules, a delay, easing, and a callback.
-	 */
-	jQuery.fn.css3animate = function(rules, p2, p3, p4){
-		var obj = $(this), delay = 400, easing = 'cubic-bezier(.02, .01, .47, 1)', callback;
-		if(typeof rules !== 'object') return this;
-		if(typeof p2 === 'number')   delay    = p2;
-		if(typeof p2 === 'function') callback = p2;
-		if(typeof p2 === 'string')   easing   = p2;
 
-		if(typeof p3 === 'number')   delay    = p3;
-		if(typeof p3 === 'function') callback = p3;
-		if(typeof p3 === 'string')   easing   = p3;
-
-		if(typeof p4 === 'number')   delay    = p4;
-		if(typeof p4 === 'function') callback = p4;
-		if(typeof p4 === 'string')   easing   = p4;
-
-		setTimeout(function(){
-			obj.css3('transition', 'all ' + delay + 'ms '+ easing +' 0s');
-			$.each(rules, function(ruleName, rule){
-				obj.css3(ruleName, rule);
-			});
-		},0);
-		setTimeout(function(){
-			obj.css3('transition', 'all 0s '+ easing +' 0s');
-			if(typeof callback === 'function') callback();
-		},delay);
-
-		return obj;
-	};
-
-	/**
-	 * Vendor prefixed version of jQuery's .css function
-	 * can get and set vendor-prefixed css rules, like 'transition'
-	 */
-	jQuery.fn.css3 = function(ruleName, rule){
-		var vendors = ['', '-moz-', '-ms-', '-webkit-'], obj = $(this);
-		var set = function(ruleName, rule){
-			$.each(vendors, function(index, vendor){
-				obj.css(vendor + ruleName, rule);
-			});
-		};
-		if(typeof ruleName === 'object'){
-			$.each(ruleName, function(ruleName, rule){
-				set(ruleName, rule);
-			});
-			return obj;
-		}else if(typeof rule === 'undefined'){
-			for(var i = 0; i < vendors.length; i++) {
-				if(typeof obj.css(vendors[i] + ruleName) === 'string'){
-					return obj.css(vendors[i] + ruleName);
-				}
-			}
-			return;
-		}
-		set(ruleName, rule);
-		return obj;
-	};
 
 	/**
 	 * Global accessable methods of Parallax
@@ -163,7 +100,7 @@
 			auto_add_children      : true,
 			resize_viewport_width  : false,
 			resize_viewport_height : false,
-			use_css3               : false,
+			//use_css3               : false,
 			enable_arrow_events    : false
 		},
 		//These methods are used within the transitions functions to parallax the background
@@ -264,97 +201,12 @@
 				}).p_animate({
 					top : 0
 				}, options.animation_time, finished);
-			},
-			flipRight : function(newPage, currentPage, viewPort, options, finished){
-				Parallax.parallaxMethods.right(viewPort, options);
-				newPage
-					.css3({
-						'transform':'rotateY(-180deg)',
-						'backface-visibility' :'hidden'
-					})
-					.css({
-						left : 0,
-						top : 0,
-					}).show();
-
-				currentPage
-					.css3animate({'backface-visibility' :'hidden'},0, function(){
-						currentPage.css3animate({'transform':'rotateY(-180deg)'},options.animation_time);
-						newPage.css3animate({'transform':'rotateY(0deg)'},options.animation_time, function(){
-							currentPage.hide().css3('transform','rotateY(0deg)');
-							finished();
-						});
-					});
-			},
-			flipLeft : function(newPage, currentPage, viewPort, options, finished){
-				Parallax.parallaxMethods.left(viewPort, options);
-				newPage
-					.css3({
-						'transform':'rotateY(180deg)',
-						'backface-visibility' :'hidden'
-					})
-					.css({
-						left : 0,
-						top : 0,
-					}).show();
-
-				currentPage
-					.css3animate({'backface-visibility' :'hidden'},0, function(){
-						currentPage.css3animate({'transform':'rotateY(180deg)'},options.animation_time);
-						newPage.css3animate({'transform':'rotateY(0deg)'},options.animation_time, function(){
-							currentPage.hide().css3('transform','rotateY(0deg)');
-							finished();
-						});
-					});
-			},
-			flipUp : function(newPage, currentPage, viewPort, options, finished){
-				Parallax.parallaxMethods.up(viewPort, options);
-				newPage
-					.css3({
-						'transform':'rotateX(180deg)',
-						'backface-visibility' :'hidden'
-					})
-					.css({
-						left : 0,
-						top : 0,
-					}).show();
-
-				currentPage
-					.css3animate({'backface-visibility' :'hidden'},0, function(){
-						currentPage.css3animate({'transform':'rotateX(180deg)'},options.animation_time);
-						newPage.css3animate({'transform':'rotateX(0deg)'},options.animation_time, function(){
-							currentPage.hide().css3('transform','rotateX(0deg)');
-							finished();
-						});
-					});
-			},
-			flipDown : function(newPage, currentPage, viewPort, options, finished){
-				Parallax.parallaxMethods.down(viewPort, options);
-				newPage
-					.css3({
-						'transform':'rotateX(-180deg)',
-						'backface-visibility' :'hidden'
-					})
-					.css({
-						left : 0,
-						top : 0,
-					}).show();
-
-				currentPage
-					.css3animate({'backface-visibility' :'hidden'},0, function(){
-						currentPage.css3animate({'transform':'rotateX(-180deg)'},options.animation_time);
-						newPage.css3animate({'transform':'rotateX(0deg)'},options.animation_time, function(){
-							currentPage.hide().css3('transform','rotateX(0deg)');
-							finished();
-						});
-					});
 			}
 		}
 	};
 
-	var ViewPort = Object.create(Archetype).methods({
-		initialize : function(container, options)
-		{
+	var ViewPort = Object.create(BaseObject).methods({
+		initialize : function(container, options){
 			var self = this;
 			this.pages = {};
 			this.pageCount = 0;
@@ -370,9 +222,9 @@
 
 			//Enable regular jQuery animation, or use css3 animations
 			$.fn.p_animate = $.fn.animate;
-			if(this.options.use_css3){
-				$.fn.p_animate = $.fn.css3animate;
-			}
+			//if(this.options.use_css3){
+			//	$.fn.p_animate = $.fn.css3animate;
+			//}
 
 			//Setup keyboard events
 			if(this.options.enable_arrow_events){
@@ -405,8 +257,7 @@
 		/**
 		 * Takes a jQuery element, and adds it as a page to the viewport
 		 */
-		add : function(pageElement, arg2)
-		{
+		add : function(pageElement, arg2){
 			var self = this, id;
 			if(arg2 instanceof $){
 				id = pageElement;
@@ -422,17 +273,15 @@
 			if(this.pageCount === 1){ newPage.show();}
 			return newPage;
 		},
-		remove : function(pageId)
-		{
+		remove : function(pageId){
 			if(this.current().id === pageId){
 				this.next().show();
 			}
-			delete this.pages[pageId];
+			delete this.pages[pageId]; //TODO change to slice
 			return this;
 		},
 		//Iterates over the view port and adds all child elements as pages
-		addChildren : function()
-		{
+		addChildren : function(){
 			var self = this;
 			this.element.children().each(function(index, page){
 				self.add($(page));
@@ -478,13 +327,11 @@
 			);
 		},
 		//Return the last page object
-		last : function()
-		{
+		last : function(){
 			return this._lastPage || this.dummyPage;
 		},
 		//Retuns the current page object
-		current : function()
-		{
+		current : function(){
 			return this._currentPage || this.dummyPage;;
 		},
 		//Returns the next logical page in the order. Will loop around.
@@ -498,8 +345,7 @@
 			if(typeof findMin === 'undefined'){ return this.firstPage();}
 			return findMin;
 		},
-		previous : function()
-		{
+		previous : function(){
 			var currentOrderNum = this.current().order;
 			var filterSmaller = _.reduce(this.pages, function(result, page, pageId){
 				if(page.order < currentOrderNum){result[pageId] = page;}
@@ -509,19 +355,16 @@
 			if(typeof findMax === 'undefined'){ return this.lastPage();}
 			return findMax;
 		},
-		firstPage : function()
-		{
+		firstPage : function(){
 			return _.min(this.pages, function(page){return page.order;}) || this.dummyPage;
 		},
-		lastPage : function()
-		{
+		lastPage : function(){
 			return _.max(this.pages, function(page){return page.order;}) || this.dummyPage;
 		},
 	});
 
-	var Page = Object.create(Archetype).methods({
-		initialize : function(element, viewPort, order, id)
-		{
+	var Page = Object.create(BaseObject).methods({
+		initialize : function(element, viewPort, order, id){
 			var self	  = this;
 			this.viewPort = viewPort;
 			this.element  = element.css('position', 'absolute').hide();
@@ -537,21 +380,17 @@
 			});
 			return this;
 		},
-		hide : function()
-		{
+		hide : function(){
 			this.element.hide();
 			return this;
 		},
-		isCurrent : function()
-		{
+		isCurrent : function(){
 			return this.viewPort.current().id === this.id;
 		},
-		isFirstPage : function()
-		{
+		isFirstPage : function(){
 			return this.viewPort.firstPage().id === this.id;
 		},
-		isLastPage : function()
-		{
+		isLastPage : function(){
 			return this.viewPort.lastPage().id === this.id;
 		},
 	});

@@ -87,8 +87,6 @@
 		}
 	};
 
-
-
 	/**
 	 * Global accessable methods of Parallax
 	 * Users can add/edit these
@@ -100,7 +98,7 @@
 			auto_add_children      : true,
 			resize_viewport_width  : false,
 			resize_viewport_height : false,
-			//use_css3               : false,
+			animation_fn           : $.fn.animate,
 			enable_arrow_events    : false
 		},
 		//These methods are used within the transitions functions to parallax the background
@@ -141,7 +139,7 @@
 					left : 0,
 					top : 0
 				});
-				if(viewPort.height() === 0){
+				if(viewPort.height() < newPage.height()){
 					viewPort.height(newPage.height());
 				}
 				finished();
@@ -220,11 +218,7 @@
 				'overflow' : 'hidden'
 			});
 
-			//Enable regular jQuery animation, or use css3 animations
-			$.fn.p_animate = $.fn.animate;
-			//if(this.options.use_css3){
-			//	$.fn.p_animate = $.fn.css3animate;
-			//}
+			$.fn.p_animate = this.options.animation_fn;
 
 			//Setup keyboard events
 			if(this.options.enable_arrow_events){
@@ -270,14 +264,15 @@
 			newPage.on('transition', function(transitionType, page, callback){
 				self.transitionPage(transitionType, page, callback);
 			});
-			if(this.pageCount === 1){ newPage.show();}
+			this.trigger('add', newPage);
 			return newPage;
 		},
 		remove : function(pageId){
+			this.trigger('remove', this.pages[pageId]);
 			if(this.current().id === pageId){
 				this.next().show();
 			}
-			delete this.pages[pageId]; //TODO change to slice
+			delete this.pages[pageId];
 			return this;
 		},
 		//Iterates over the view port and adds all child elements as pages
@@ -300,18 +295,26 @@
 			this._lastPage = this._currentPage;
 			this._currentPage = page;
 
+			page.trigger('before_transition:' + transitionType);
 			page.trigger('before_transition');
+			this.trigger('before_transition:' + transitionType, page);
 			this.trigger('before_transition', page);
 			this._inTransition = true;
 			if(this.options.resize_viewport_width){
 				this.element.p_animate({
 					width : page.element.width()
-				}, this.options.animation_time);
+				}, {
+					duration : this.options.animation_time,
+					queue : false
+				});
 			}
 			if(this.options.resize_viewport_height){
 				this.element.p_animate({
 					height : page.element.height()
-				}, this.options.animation_time);
+				}, {
+					duration : this.options.animation_time,
+					queue : false
+				});
 			}
 			Parallax.transitions[transitionType](
 				page.element,
@@ -321,7 +324,9 @@
 				function(){
 					self._inTransition = false;
 					if(typeof callback === 'function'){callback();}
+					page.trigger('after_transition:' + transitionType);
 					page.trigger('after_transition');
+					self.trigger('after_transition:' + transitionType, page);
 					self.trigger('after_transition', page);
 				}
 			);
@@ -332,7 +337,7 @@
 		},
 		//Retuns the current page object
 		current : function(){
-			return this._currentPage || this.dummyPage;;
+			return this._currentPage || this.dummyPage;
 		},
 		//Returns the next logical page in the order. Will loop around.
 		next : function(){

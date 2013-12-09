@@ -1,99 +1,69 @@
-** Note: This library is still under construction **
+Check out a demo [here](http://stolksdorf.github.io/Parallax)
 
-# Tell me about it
+
+# Basics
 
 Parallax is a Javascript library that uses jQuery to beautifully transition content on the page, while parallaxing it's background. At it's core it is a library for manipulating **Pages** within a **ViewPort**.
 
 This can be as simple as an image carousel, or as complex as an entire website's navigation using arrows keys and various events. Parallax is built to be incredibly flexible and easy to use.
 
-Here's an example of using Parallax.js to build a simple image Carousel
+## Carousel Example
 
-	<div id='viewport'>
+Here's our HTML for setting up a simple Carseoul. Our pages can be images, div's text, or even iframes.
+
+	<div id='viewport' style='height:300px;
+	background-image:url("http://www.webtexture.net/wp-content/uploads/2011/08/5-Abstract-Simple-Patterns-with-PSD-Pat-File-thumb04.jpg")'>
 		<div>Just some boring text</div>
-
+		<img src="http://i.imgur.com/ng2CT.gif"></img>
+		<div style='background-color:green'>more boring text</div>
 	</div>
-
-### Image Carousel
 
 Let's build a simple carousel. Every 2 seconds we want a new page to slide in from the right and loop around back to the beginning. All of our pages are already stored within a container div called `example`.
 
 	//Create a parallax instance from our container div
-	var imageCarousel = $(example).parallax();
+	var imageCarousel = $(example).find('#viewport').parallax();
+
 	//Every two seconds, grab the next page, and bring it in from the right
 	setInterval(function(){
 		imageCarousel.next().right();
 	},2000);
 
-### Keyboard Navigation
-
-Time for something a bit trickier. For this example we'll play around with ordering, keyboard events, and callbacks. When the view port is selected, the right and left arrow keys will move between the pages. The up arrow will flip to the first page, the down arrow will flip to the last page shown, and if we click on the ViewPort, we'll flip to Admiral Ackbar with an alert when it's done.
-
-	var trickyExample = $(example).parallax({
-		animation_time : 400,
-		//The viewport comes built in with keyboard events,
-		// so it's easy to listen to them.
-		enable_arrow_events : true
-	});
-
-	trickyExample
-		.on('leftArrow', function(){
-			trickyExample.previous().left();
-		})
-		.on('rightArrow', function(){
-			trickyExample.next().right();
-		})
-		.on('upArrow', function(){
-
-			trickyExample.firstPage().flipUp();
-		})
-		.on('downArrow', function(){
-			trickyExample.last().flipDown();
-		});
-
-	$(example).click(function(){
-		//Parallax uses the HTML id to identify pages
-		//To reference them directly, use VIEWPORT.pages.HTMLID
-		trickyExample.pages.AdmiralAckbar.flipLeft(function(){
-			alert("it's a trap!");
-		});
-	})
 
 # Options
+`animation_time` (800)           - The time it takes to complete the animation
 
-`animation_time : 800`           - The time it takes to complete the animation
+`parallax_scale` (0.3)           - The scale at which the backbround will move relative to the content. Defaults to the background moving 30% of the content. Set it to `false` to disable parallaxing.
 
-`parallax_scale : 0.3`           - The scale at which the backbround will move relative to the content. Defaults to the background moving 30% of the content. Set it to `false` to disable parallaxing.
+`auto_add_children` (true)       - On initialization, Parallax will add each of the child elements as pages. Set this to false to completely control which elements are pages.
 
-`auto_add_children : true`       - On initialization, Parallax will add each of the child elements as pages. Set this to false to completely control which elements are pages.
+`resize_viewport_width` (false)  - Set to `true` to have the ViewPort's width resize to match the current page's width
 
-`resize_viewport_width : false`  - Set to `true` to have the ViewPort's width resize to match the current page's width
+`resize_viewport_height` (false) - Set to `true` to have the ViewPort's height resize to match the current page's height
 
-`resize_viewport_height : false` - Set to `true` to have the ViewPort's height resize to match the current page's height
-
-`use_css3 : false`               - If true Parallax will use CSS3 transitions instead of jQuery animations. **Note:** Not all browsers support CSS3 transition, make sure you test!
-
-`enable_arrow_events : false`    - If true, the ViewPort will emit events whenever the user presses arrow keys
+`enable_arrow_events` (false)    - If true, the ViewPort will emit events whenever the user presses arrow keys
 
 
 	//Play around with the options!
-	var optionSandbox = $(example).parallax({
-		animation_time         : 800,
-		parallax_scale         : 0.3,
+	var optionSandbox = $(example).find('#viewport').parallax({
+		animation_time         : 400,
+		parallax_scale         : 0.9,
 		auto_add_children      : true,
-		resize_viewport_width  : false,
-		resize_viewport_height : false,
-		use_css3               : false,
+		resize_viewport_width  : true,
+		resize_viewport_height : true,
 		enable_arrow_events    : false
 	});
-	optionSandbox.next().right();
 
-# ViewPort and Page API
+	//Click to go to the next page
+	$(example).click(function(){
+		optionSandbox.next().up();
+	})
 
-The following is a list of all the functions available for the `ViewPort` and each `Page`
+
+# Methods
 
 ## ViewPort
 
-`.pages` - Key/Value pair list of each page object and it's id. Parallax will use the page's HTML id as it's id if available. If not, it will generate an id for it. Useful for accessing specific pages.
+`.pages` - Key/Value pair list of each page object and it's id. Parallax will use the page's HTML id as it's id if available. If not, it will generate an id for it. Useful for accessing specific pages. eg. `viewport.pages.coolPageId.next()`
 
 `.add(jQueryObject), .add(id, jQueryObject)` - Consumes a jQuery object and adds it as a page to this ViewPort. Returns the created page object.
 
@@ -112,7 +82,7 @@ The following is a list of all the functions available for the `ViewPort` and ea
 
 ## Page
 
-`transitions` - Each page will adopt each method in the `Parallax.transitions` object. Calling these on a page will use that function and transition it as the currently viewed page. Currently supported transitions are `.right()`, `.left()`, `.up()`, `.down()`, `.flipRight()`, `.flipLeft()`, `.flipUp()`, and `.flipDown()`
+`transitions` - Each page will adopt each method in the `Parallax.transitions` object. Calling these on a page will use that function and transition it as the currently viewed page. Currently supported transitions are `.right()`, `.left()`, `.up()`, and `.down()`
 
 `.order` - Every page is given a numerical value as it's `order` when it's created. ViewPort commands such as `next` and `previous` use this to determine the ordering of your pages. Parallax will simply maintain the ordering at which you added pages, however feel free to change these values to fine tune the order you want.
 
@@ -123,69 +93,106 @@ The following is a list of all the functions available for the `ViewPort` and ea
 `.isCurrent()` - Returns a boolean on whether the page is being currently shown or not.
 
 `.isFirstPage()` - Returns true if this page has the lowest ordering
-`isLastPage()` - Retusn true if this page has the highest ordering
+`.isLastPage()` - Returns true if this page has the highest ordering
 
-# Adding Pages
 
-Using the `auto_add_children` option, all child elements of the viewport are added as pages on the creation of the Parallax object.
-
-Any HTML element can be added as a page to a ViewPort. Parallax will try and use the element's HTML id as the pages id if possible.
 
 # Events and Callbacks
 
-
-### Events
-
-#### Viewport
-`looped`, `remove`, `add`, `beforeTransition`, `beforeTransition:[type]`, `transition`, `transition:[type]`, `leftArrow`, `upArrow`, `rightArrow`, `downArrow`
-
-#### Page
-`remove`, `beforeTransition`, `afterTransition`, `resize`, `orderChange`,
-
-
-
-### Arrow Key Events
-
-By setting the `enable_arrow_events` option to true, the ViewPort will now emit events whenever the user presses the arrow keys.
-
-	var arrowNav = $(example).parallax({
-		enable_arrow_events : true
-	});
-	arrowNav
-		.on('leftArrow', function(){
-			arrowNav.next().left();
-		})
-		.on('rightArrow', function(){
-			arrowNav.next().right();
-		})
-		.on('upArrow', function(){
-			arrowNav.next().up();
-		})
-		.on('downArrow', function(){
-			arrowNav.next().down();
-		});
-
-
-### Callbacks
+## Callbacks
 
 Whenever you call a transition on a page you can always add a callback to it for when it's completed
 
-	var callbackExample = $(example).parallax();
-	callbackExample.next().right(function(){
+	var callbackExample = $(example).find('#viewport').parallax();
+
+	callbackExample.next().down(function(){
 		alert('Completed!');
 	});
 
 
+## Events
 
-# Advanced Usage
+Both the **Viewport** and **Pages** emit events that can be listened. You can listen to events by using `.on(eventName, action)`. Here is the list of emitted events.
 
-## Changing Ordering
+	var eventExample = $(example).find('#viewport').parallax();
+
+	eventExample.on('after_transition:up', function(){
+		alert('Completed!');
+	})
+
+	eventExample.next().up();
+
+### Viewport
+* `remove`
+* `add`
+* `before_transition`
+* `before_transition:[type]`
+* `after_transition`
+* `after_transition:[type]`
+* `leftArrow`
+* `upArrow`
+* `rightArrow`
+* `downArrow`
+
+### Page
+* `before_transition`
+* `before_transition:[type]`
+* `after_transition`
+* `after_transition:[type]`
+
+
+# Advanced Examples
+
+## Keyboard Navigation
+
+For this example we'll play around with ordering, keyboard events, and callbacks. When the view port is selected, the right, left arrow keys will move between the pages. The up arrow key will always go to the first page, and the down arrow key will always go to the last page.
+
+	var keyboardNav = $(example).find('#viewport').parallax({
+		animation_time : 400,
+
+		//The viewport comes built in with keyboard events
+		enable_arrow_events : true
+	});
+
+	keyboardNav
+		.on('leftArrow', function(){
+			keyboardNav.previous().left();
+		})
+		.on('rightArrow', function(){
+			keyboardNav.next().right();
+		})
+		.on('upArrow', function(){
+			keyboardNav.firstPage().up();
+		})
+		.on('downArrow', function(){
+			keyboardNav.lastPage().down();
+		});
+
 
 ## Custom Transitions
 
-## CSS3 Transitions
+You can create your own transitions and add them to Parallax. We're going to make a fade in transition.
 
-#Improvements over the old library
+	Parallax.transitions.fadeIn = function(newPage, currentPage, viewPort, options, finished){
+		currentPage.fadeOut(options.animation_time);
+		newPage.css({
+			left : 0,
+			top : 0
+		}).fadeIn(options.animation_time, finished);
+	};
+
+	var customTransition = $(example).find('#viewport').parallax();
+
+	$(example).click(function(){
+		customTransition.next().fadeIn();
+	})
+
+
+
+
+# Other
+
+## Improvements over the old library
 * Use a target div, instead of the window
 * Added css3 animation support
 * Page ordering allows for intutive commands like getting the next page or the first page
@@ -194,7 +201,7 @@ Whenever you call a transition on a page you can always add a callback to it for
 * Full use of events
 * Custom animation support
 
-# TODO
+## TODO
 * Separate id creation from page ordering
 * Make archetype a mixin
 * Make css3 internal and not extend jQuery
